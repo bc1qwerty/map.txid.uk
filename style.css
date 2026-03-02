@@ -1,5 +1,5 @@
 :root {
-  --font: 'Space Mono', monospace; --font-ko: 'Pretendard', sans-serif;
+  --font: 'Space Mono', monospace; --font-ko: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
   --bg: #0d1117; --bg2: #161b22; --bg3: #21262d;
   --border: #30363d; --text1: #e6edf3; --text2: #8b949e; --text3: #6e7681;
   --accent: #f7931a; --green: #3fb950; --blue: #58a6ff;
@@ -10,7 +10,18 @@
 body { font-family: var(--font-ko); background: var(--bg); color: var(--text1); min-height: 100vh; }
 header { background: var(--bg2); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
 .header-inner { max-width: var(--max-w); margin: 0 auto; padding: 0 20px; height: 52px; display: flex; align-items: center; gap: 16px; }
-.logo { font-family: var(--font); font-size: 1.1rem; font-weight: 700; color: var(--accent); text-decoration: none; }
+.logo {
+  color: var(--accent);
+  font-family: var(--font);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  white-space: nowrap;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: opacity .2s;
+}
+.logo:hover { opacity: .8; }
 .logo span { color: var(--text1); }
 nav { display: flex; gap: 14px; flex: 1; }
 nav a { color: var(--text2); text-decoration: none; font-size: .8rem; transition: color .2s; }
