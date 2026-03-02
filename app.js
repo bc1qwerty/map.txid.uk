@@ -48,6 +48,22 @@ const CENTROIDS = {
 
 let worldGeo = null;
 
+// world-atlas name → ISO2 매핑
+const NAME_TO_ISO2 = {
+  'United States of America':'US','Germany':'DE','United Kingdom':'GB','France':'FR',
+  'Netherlands':'NL','Canada':'CA','Singapore':'SG','Japan':'JP','Australia':'AU',
+  'Switzerland':'CH','Finland':'FI','Sweden':'SE','Norway':'NO','Brazil':'BR',
+  'South Korea':'KR','Korea':'KR','India':'IN','Russia':'RU','Italy':'IT',
+  'Spain':'ES','Poland':'PL','Austria':'AT','Czech Republic':'CZ','Czechia':'CZ',
+  'Ukraine':'UA','Turkey':'TR','Argentina':'AR','Mexico':'MX','South Africa':'ZA',
+  'Thailand':'TH','Indonesia':'ID','Taiwan':'TW','Hong Kong':'HK','China':'CN',
+  'Malaysia':'MY','Philippines':'PH','Vietnam':'VN','Romania':'RO','Hungary':'HU',
+  'Denmark':'DK','Belgium':'BE','Portugal':'PT','Greece':'GR','Bulgaria':'BG',
+  'Croatia':'HR','Lithuania':'LT','Latvia':'LV','Estonia':'EE','Israel':'IL',
+  'United Arab Emirates':'AE','Saudi Arabia':'SA','Iceland':'IS','Luxembourg':'LU',
+};
+
+
 async function loadData() {
   const gs = document.getElementById('global-stats');
   const cl = document.getElementById('country-list');
@@ -135,13 +151,13 @@ function renderMap(mapData) {
     .attr('class', 'country')
     .attr('d', path)
     .attr('fill', d => {
-      const cc = d.properties.iso_a2;
+      const cc = NAME_TO_ISO2[d.properties.name] || d.properties.iso_a2;
       return valMap[cc] ? colorScale(valMap[cc]) : (isDark ? '#21262d' : '#eaeef2');
     })
     .attr('stroke', isDark ? '#30363d' : '#d0d7de')
     .attr('stroke-width', 0.5)
     .on('mouseover', (e, d) => {
-      const cc = d.properties.iso_a2;
+      const cc = NAME_TO_ISO2[d.properties.name] || d.properties.iso_a2;
       const val = valMap[cc];
       if (!val) return;
       const pct = ((val / mapData.total) * 100).toFixed(1);
