@@ -1,13 +1,3 @@
-:root {
-  --font: 'Space Mono', monospace; --font-ko: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-  --bg: #0d1117; --bg2: #161b22; --bg3: #21262d;
-  --border: #30363d; --text1: #e6edf3; --text2: #8b949e; --text3: #6e7681;
-  --accent: #f7931a; --green: #3fb950; --blue: #58a6ff;
-  --max-w: 1200px;
-}
-[data-theme="light"] { --bg:#f6f8fa; --bg2:#fff; --bg3:#eaeef2; --border:#d0d7de; --text1:#1f2328; --text2:#656d76; --text3:#8c959f; --accent:#bc4e00; }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: var(--font-ko); background: var(--bg); color: var(--text1); min-height: 100vh; }
 header { background: var(--bg2); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
 .nav-top { max-width: var(--max-w); margin: 0 auto; padding: 0 20px; height: 48px; display: flex; align-items: center; gap: 12px; }
 .logo { font-family: var(--font); font-size: 1rem; font-weight: 700; color: var(--accent); text-decoration: none; letter-spacing: .05em; flex-shrink: 0; }
@@ -15,11 +5,6 @@ header { background: var(--bg2); border-bottom: 1px solid var(--border); positio
 .logo-sep { color: var(--border); font-family: var(--font); font-size: .9rem; margin: 0 2px; }
 .logo-sub { font-family: var(--font); font-size: .8rem; color: var(--text3); }
 .nav-links { display: flex; align-items: center; gap: 4px; }
-.nav-links a { color: var(--text2); font-size: .8rem; padding: 6px 12px; border-radius: 4px; transition: all .2s; text-decoration: none; font-family: var(--font-ko); position: relative; }
-.nav-links a::after { content: ''; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); width: 0; height: 2px; background: var(--accent); border-radius: 1px; transition: width .2s; }
-.nav-links a:hover { color: var(--accent); background: rgba(247,147,26,.06); }
-.nav-links a.active { color: var(--accent); background: rgba(247,147,26,.08); }
-.nav-links a.active::after { width: 60%; }
 .nav-right { margin-left: auto; display: flex; align-items: center; gap: 6px; }
 .theme-btn { background: none; border: 1px solid var(--border); color: var(--text2); width: 32px; height: 32px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; }
 .theme-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -35,9 +20,22 @@ header { background: var(--bg2); border-bottom: 1px solid var(--border); positio
 .tools-dropdown-menu a svg { flex-shrink: 0; }
 .tools-dropdown-menu .dd-name { display: block; color: inherit; }
 .tools-dropdown-menu .dd-sub { display: block; font-size: .65rem; color: var(--text3); }
-.logo:hover { opacity: .8; }
-
-nav { display: flex; gap: 14px; flex: 1; }
+:root {
+  --font: 'Space Mono', monospace; --font-ko: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  --bg: #0d1117; --bg2: #161b22; --bg3: #21262d;
+  --border: #30363d; --text1: #e6edf3; --text2: #8b949e; --text3: #6e7681;
+  --accent: #f7931a; --green: #3fb950; --blue: #58a6ff;
+  --max-w: 1200px;
+}
+[data-theme="light"] { --bg:#f6f8fa; --bg2:#fff; --bg3:#eaeef2; --border:#d0d7de; --text1:#1f2328; --text2:#656d76; --text3:#8c959f; --accent:#bc4e00; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-ko); background: var(--bg); color: var(--text1); min-height: 100vh; }
+.nav-links a { color: var(--text2); font-size: .8rem; padding: 6px 12px; border-radius: 4px; transition: all .2s; text-decoration: none; font-family: var(--font-ko); position: relative; }
+.nav-links a::after { content: ''; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); width: 0; height: 2px; background: var(--accent); border-radius: 1px; transition: width .2s; }
+.nav-links a:hover { color: var(--accent); background: rgba(247,147,26,.06); }
+.nav-links a.active { color: var(--accent); background: rgba(247,147,26,.08); }
+.nav-links a.active::after { width: 60%; }
+.tools-dropdown:hover nav { display: flex; gap: 14px; flex: 1; }
 nav a { color: var(--text2); text-decoration: none; font-size: .8rem; transition: color .2s; }
 nav a.active { color: var(--accent); }
 .header-controls { display: flex; align-items: center; gap: 8px; margin-left: auto; }
