@@ -73,8 +73,8 @@ async function loadData() {
   try {
     if (currentTab === 'ln') {
       const [countries, stats] = await Promise.all([
-        fetch(`${API}/v1/lightning/nodes/countries`).then(r=>r.json()),
-        fetch(`${API}/v1/lightning/statistics/latest`).then(r=>r.json()),
+        fetch(`${API}/v1/lightning/nodes/countries`, {signal: AbortSignal.timeout(10000)}).then(r=>r.json()),
+        fetch(`${API}/v1/lightning/statistics/latest`, {signal: AbortSignal.timeout(10000)}).then(r=>r.json()),
       ]);
       const total = Object.values(countries).reduce((s,n) => s+(n.count||0), 0);
       const s = stats.latest || stats;
@@ -88,7 +88,7 @@ async function loadData() {
       renderMap(window._mapData);
       renderCountryList(sorted, total, 'nodes');
     } else {
-      const pools = await fetch(`${API}/v1/mining/pools/1w`).then(r=>r.json());
+      const pools = await fetch(`${API}/v1/mining/pools/1w`, {signal: AbortSignal.timeout(10000)}).then(r=>r.json());
       gs.innerHTML = `
         <div class="gs-card"><div class="gs-val">${pools.pools?.length||0}</div><div class="gs-lbl">⛏ 활성 마이닝 풀</div></div>
         <div class="gs-card"><div class="gs-val">${pools.blockCount||0}</div><div class="gs-lbl">최근 7일 블록</div></div>`;
@@ -210,11 +210,11 @@ function renderCountryList(sorted, total, unit) {
 // 세계지도 GeoJSON 로드 (Natural Earth 110m)
 async function init() {
   try {
-    const geo = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(r=>r.json());
+    const geo = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json', {signal: AbortSignal.timeout(15000)}).then(r=>r.json());
     const topojson = await import('https://cdn.jsdelivr.net/npm/topojson-client@3/+esm');
     worldGeo = topojson.feature(geo, geo.objects.countries);
     // ISO alpha2 코드 맞추기 위해 countries 데이터 fetch
-    const codesResp = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(r=>r.json());
+    const codesResp = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json', {signal: AbortSignal.timeout(15000)}).then(r=>r.json());
     // topojson에 iso_a2 없으면 수동 매핑으로 보완
     loadData();
   } catch(e) {
