@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bitcoin Node Map | txid.uk</title>
+<meta name="description" content="비트코인 라이트닝 노드 · 채굴풀 세계 분포 지도">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <a href="https://txid.uk" class="logo">₿ <span>txid</span>.uk</a>
+    <nav>
+      <a href="https://txid.uk">탐색기</a>
+      <a href="https://tools.txid.uk">Tools</a>
+      <a href="https://viz.txid.uk">Viz</a>
+      <a href="#" class="active">Map</a>
+    </nav>
+    <div class="header-controls">
+      <button class="tab-btn active" id="tab-ln" onclick="switchTab('ln')">⚡ Lightning</button>
+      <button class="tab-btn" id="tab-mining" onclick="switchTab('mining')">⛏ Mining</button>
+      <button id="theme-btn" onclick="toggleTheme()">🌙</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="map-wrap">
+    <svg id="world-map" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet"></svg>
+    <div id="map-tooltip" class="map-tooltip"></div>
+  </div>
+
+  <div class="stats-panel">
+    <div id="global-stats" class="global-stats"></div>
+    <div id="country-list" class="country-list"></div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2025 txid.uk</span>
+    <span id="data-source">mempool.space API</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
