@@ -218,7 +218,7 @@ function renderMap(mapData) {
       const rank = mapData.data.findIndex(([c]) => c === cc) + 1;
       const label = currentTab === 'ln' ? '노드' : '블록';
       const detail = document.getElementById('map-detail');
-      if (detail) detail.innerHTML = \`<span style="font-size:1.4rem">\${FLAGS[cc]||''}</span> <b>\${NAMES[cc]||cc}</b> &nbsp;<span style="color:var(--text3);font-size:.75rem">#\${rank}위</span><br><span style="color:var(--accent);font-weight:700">\${val.toLocaleString()}</span> \${label} · <span style="color:var(--text2)">\${pct}%</span>\`;
+      if (detail) detail.innerHTML = `<span style="font-size:1.4rem">\${FLAGS[cc]||''}</span> <b>\${NAMES[cc]||cc}</b> &nbsp;<span style="color:var(--text3);font-size:.75rem">#\${rank}위</span><br><span style="color:var(--accent);font-weight:700">\${val.toLocaleString()}</span> \${label} · <span style="color:var(--text2)">\${pct}%</span>`;
     });
 
   // 버블 (상위 20개국)
