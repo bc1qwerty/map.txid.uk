@@ -230,11 +230,7 @@ function renderCountryList(sorted, total, unit) {
 async function init() {
   try {
     const geo = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json', {signal: AbortSignal.timeout(15000)}).then(r=>r.json());
-    const topojson = await import('https://cdn.jsdelivr.net/npm/topojson-client@3/+esm');
     worldGeo = topojson.feature(geo, geo.objects.countries);
-    // ISO alpha2 코드 맞추기 위해 countries 데이터 fetch
-    const codesResp = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json', {signal: AbortSignal.timeout(15000)}).then(r=>r.json());
-    // topojson에 iso_a2 없으면 수동 매핑으로 보완
     loadData();
   } catch(e) {
     // GeoJSON fallback
