@@ -76,14 +76,15 @@ async function loadData() {
         fetch(`${API}/v1/lightning/nodes/countries`, {signal: AbortSignal.timeout(10000)}).then(r=>r.json()),
         fetch(`${API}/v1/lightning/statistics/latest`, {signal: AbortSignal.timeout(10000)}).then(r=>r.json()),
       ]);
-      const total = Object.values(countries).reduce((s,n) => s+(n.count||0), 0);
+      // API 응답: 배열 [{iso, count, ...}, ...]
+      const total = countries.reduce((s,n) => s+(n.count||0), 0);
       const s = stats.latest || stats;
       gs.innerHTML = `
         <div class="gs-card"><div class="gs-val">${(s.node_count||0).toLocaleString()}</div><div class="gs-lbl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> 총 노드 수</div></div>
         <div class="gs-card"><div class="gs-val">${(s.channel_count||0).toLocaleString()}</div><div class="gs-lbl">채널 수</div></div>
         <div class="gs-card"><div class="gs-val">${((s.total_capacity||0)/1e8).toFixed(0)} BTC</div><div class="gs-lbl">총 용량</div></div>`;
 
-      const sorted = Object.entries(countries).sort((a,b)=>b[1].count-a[1].count);
+      const sorted = countries.map(n => [n.iso, {count: n.count, share: n.share}]).sort((a,b)=>b[1].count-a[1].count);
       window._mapData = { type:'ln', data: sorted, total };
       renderMap(window._mapData);
       renderCountryList(sorted, total, 'nodes');
