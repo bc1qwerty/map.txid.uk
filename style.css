@@ -64,3 +64,6 @@ nav a.active { color: var(--accent); }
 footer { border-top: 1px solid var(--border); padding: 16px 20px; }
 .footer-inner { max-width: var(--max-w); margin: 0 auto; display: flex; justify-content: space-between; font-size: .7rem; color: var(--text3); }
 @media (max-width: 680px) { .stats-panel { grid-template-columns: 1fr; } .cl-row { grid-template-columns: 24px 80px 1fr 48px; } .cl-pct { display: none; } }
+
+.cl-row.highlighted { background: rgba(247,147,26,.12); border-radius: 6px; }
+#map-detail { font-family: var(--font-ko); font-size: .82rem; color: var(--text1); line-height: 1.8; min-height: 2.5rem; }

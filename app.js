@@ -170,7 +170,26 @@ function renderMap(mapData) {
       tooltip.style.left = (e.clientX - rect.left + 12) + 'px';
       tooltip.style.top = (e.clientY - rect.top - 10) + 'px';
     })
-    .on('mouseout', () => tooltip.style.display = 'none');
+    .on('mouseout', () => tooltip.style.display = 'none')
+    .on('click', (e, d) => {
+      const cc = NAME_TO_ISO2[d.properties.name] || d.properties.iso_a2;
+      const val = valMap[cc];
+      if (!val) return;
+      // 하이라이트
+      svg.selectAll('.country').attr('stroke', isDark ? '#30363d' : '#d0d7de').attr('stroke-width', 0.5);
+      d3.select(e.target).attr('stroke', '#f7931a').attr('stroke-width', 2);
+      // 사이드패널 하이라이트
+      const rows = document.querySelectorAll('.cl-row');
+      rows.forEach(r => r.classList.remove('highlighted'));
+      const names = NAMES[cc] || cc;
+      rows.forEach(r => { if (r.querySelector('.cl-name')?.textContent === names) { r.classList.add('highlighted'); r.scrollIntoView({behavior:'smooth',block:'nearest'}); }});
+      // 상세 패널 표시
+      const pct = ((val / mapData.total) * 100).toFixed(1);
+      const rank = mapData.data.findIndex(([c]) => c === cc) + 1;
+      const label = currentTab === 'ln' ? '노드' : '블록';
+      const detail = document.getElementById('map-detail');
+      if (detail) detail.innerHTML = \`<span style="font-size:1.4rem">\${FLAGS[cc]||'🌐'}</span> <b>\${NAMES[cc]||cc}</b> &nbsp;<span style="color:var(--text3);font-size:.75rem">#\${rank}위</span><br><span style="color:var(--accent);font-weight:700">\${val.toLocaleString()}</span> \${label} · <span style="color:var(--text2)">\${pct}%</span>\`;
+    });
 
   // 버블 (상위 20개국)
   const top20 = mapData.data.slice(0, 20);
