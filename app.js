@@ -116,7 +116,7 @@ async function loadData() {
       renderCountryList(sorted.map(([cc,v])=>[cc,{count:v.blocks}]), totalBlocks, '블록');
     }
   } catch(e) {
-    gs.innerHTML = `<div style="color:var(--red);font-size:.8rem">데이터 로드 실패: ${e.message}</div>`;
+    gs.innerHTML = `<div style="color:var(--red);font-size:.8rem">데이터 로드 실패: ${String(e.message).replace(/</g,'&lt;')}</div>`;
   }
 }
 
