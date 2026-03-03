@@ -79,7 +79,7 @@ async function loadData() {
       const total = Object.values(countries).reduce((s,n) => s+(n.count||0), 0);
       const s = stats.latest || stats;
       gs.innerHTML = `
-        <div class="gs-card"><div class="gs-val">${(s.node_count||0).toLocaleString()}</div><div class="gs-lbl">⚡ 총 노드 수</div></div>
+        <div class="gs-card"><div class="gs-val">${(s.node_count||0).toLocaleString()}</div><div class="gs-lbl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> 총 노드 수</div></div>
         <div class="gs-card"><div class="gs-val">${(s.channel_count||0).toLocaleString()}</div><div class="gs-lbl">채널 수</div></div>
         <div class="gs-card"><div class="gs-val">${((s.total_capacity||0)/1e8).toFixed(0)} BTC</div><div class="gs-lbl">총 용량</div></div>`;
 
@@ -90,7 +90,7 @@ async function loadData() {
     } else {
       const pools = await fetch(`${API}/v1/mining/pools/1w`, {signal: AbortSignal.timeout(10000)}).then(r=>r.json());
       gs.innerHTML = `
-        <div class="gs-card"><div class="gs-val">${pools.pools?.length||0}</div><div class="gs-lbl">⛏ 활성 마이닝 풀</div></div>
+        <div class="gs-card"><div class="gs-val">${pools.pools?.length||0}</div><div class="gs-lbl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle"><path d="M15 4l5 5-11 11H4v-5L15 4z"/><line x1="9" y1="9" x2="15" y2="15"/></svg> 활성 마이닝 풀</div></div>
         <div class="gs-card"><div class="gs-val">${pools.blockCount||0}</div><div class="gs-lbl">최근 7일 블록</div></div>`;
 
       // 풀 국가 정보 매핑 (알려진 풀)
@@ -188,7 +188,7 @@ function renderMap(mapData) {
       const rank = mapData.data.findIndex(([c]) => c === cc) + 1;
       const label = currentTab === 'ln' ? '노드' : '블록';
       const detail = document.getElementById('map-detail');
-      if (detail) detail.innerHTML = \`<span style="font-size:1.4rem">\${FLAGS[cc]||'🌐'}</span> <b>\${NAMES[cc]||cc}</b> &nbsp;<span style="color:var(--text3);font-size:.75rem">#\${rank}위</span><br><span style="color:var(--accent);font-weight:700">\${val.toLocaleString()}</span> \${label} · <span style="color:var(--text2)">\${pct}%</span>\`;
+      if (detail) detail.innerHTML = \`<span style="font-size:1.4rem">\${FLAGS[cc]||''}</span> <b>\${NAMES[cc]||cc}</b> &nbsp;<span style="color:var(--text3);font-size:.75rem">#\${rank}위</span><br><span style="color:var(--accent);font-weight:700">\${val.toLocaleString()}</span> \${label} · <span style="color:var(--text2)">\${pct}%</span>\`;
     });
 
   // 버블 (상위 20개국)
@@ -217,7 +217,7 @@ function renderCountryList(sorted, total, unit) {
     const pct = ((val / total) * 100).toFixed(1);
     const w = ((val / (top[0][1].count || 1)) * 100).toFixed(0);
     return `<div class="cl-row">
-      <span class="cl-flag">${FLAGS[cc]||'🌐'}</span>
+      <span class="cl-flag">${FLAGS[cc]||''}</span>
       <span class="cl-name">${NAMES[cc]||cc}</span>
       <div class="cl-bar-wrap"><div class="cl-bar" style="width:${w}%"></div></div>
       <span class="cl-count">${val.toLocaleString()}</span>
