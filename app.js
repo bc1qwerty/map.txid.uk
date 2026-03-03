@@ -120,6 +120,32 @@ const NAMES = {
   KR:'한국',
 };
 
+
+const EN_NAMES = {
+  US:'United States',DE:'Germany',GB:'United Kingdom',FR:'France',NL:'Netherlands',
+  CA:'Canada',SG:'Singapore',JP:'Japan',AU:'Australia',CH:'Switzerland',
+  FI:'Finland',SE:'Sweden',NO:'Norway',BR:'Brazil',KR:'South Korea',IN:'India',
+  RU:'Russia',IT:'Italy',ES:'Spain',PL:'Poland',AT:'Austria',CZ:'Czechia',
+  UA:'Ukraine',TR:'Turkey',AR:'Argentina',MX:'Mexico',ZA:'South Africa',
+  TH:'Thailand',ID:'Indonesia',TW:'Taiwan',HK:'Hong Kong',CN:'China',
+  MY:'Malaysia',PH:'Philippines',VN:'Vietnam',BE:'Belgium',SK:'Slovakia',
+  LT:'Lithuania',LV:'Latvia',EE:'Estonia',RO:'Romania',HU:'Hungary',
+  DK:'Denmark',GR:'Greece',BG:'Bulgaria',HR:'Croatia',IE:'Ireland',
+  PT:'Portugal',IL:'Israel',AE:'UAE',SA:'Saudi Arabia',IS:'Iceland',
+  LU:'Luxembourg',SI:'Slovenia',CL:'Chile',CO:'Colombia',NZ:'New Zealand',
+  UY:'Uruguay',PY:'Paraguay',PE:'Peru',VE:'Venezuela',BO:'Bolivia',
+  NG:'Nigeria',KE:'Kenya',GH:'Ghana',IR:'Iran',SY:'Syria',LB:'Lebanon',
+  QA:'Qatar',KW:'Kuwait',BH:'Bahrain',BY:'Belarus',MD:'Moldova',
+  AM:'Armenia',GE:'Georgia',AZ:'Azerbaijan',AL:'Albania',RS:'Serbia',
+  BA:'Bosnia',ME:'Montenegro',MT:'Malta',CY:'Cyprus',LI:'Liechtenstein',
+  AD:'Andorra',KG:'Kyrgyzstan',KH:'Cambodia',MO:'Macao',FO:'Faroe Islands',
+  AO:'Angola',VA:'Vatican',CU:'Cuba',DO:'Dominican Republic',CR:'Costa Rica',
+  PA:'Panama',SV:'El Salvador',PR:'Puerto Rico',BZ:'Belize',
+  BM:'Bermuda',BS:'Bahamas',VG:'British Virgin Islands',AI:'Anguilla',CW:'Curaçao',
+  MA:'Morocco',EG:'Egypt',TN:'Tunisia',PK:'Pakistan',BD:'Bangladesh',
+  LK:'Sri Lanka',NP:'Nepal',MM:'Myanmar',
+};
+function getName(cc){ return lang==='ko' ? (getName(cc)) : (EN_getName(cc)); }
 // ISO3166 alpha2 → approximate centroid [lon, lat]
 const CENTROIDS = {
   US:[-98,38],DE:[10,51],GB:[-2,54],FR:[2,46],NL:[5.3,52],CA:[-96,60],SG:[103.8,1.3],
@@ -248,7 +274,7 @@ function renderMap(mapData) {
       if (!val) return;
       const pct = ((val / mapData.total) * 100).toFixed(1);
       const label = currentTab === 'ln' ? t('node_label') : t('block_label');
-      tooltip.innerHTML = `<b>${FLAGS[cc]||''} ${NAMES[cc]||cc}</b><br>${val.toLocaleString()} ${label} (${pct}%)`;
+      tooltip.innerHTML = `<b>${FLAGS[cc]||''} ${getName(cc)}</b><br>${val.toLocaleString()} ${label} (${pct}%)`;
       tooltip.style.display = 'block';
     })
     .on('mousemove', e => {
@@ -274,7 +300,7 @@ function renderMap(mapData) {
       const rank = mapData.data.findIndex(([c]) => c === cc) + 1;
       const label = currentTab === 'ln' ? t('node_label') : t('block_label');
       const detail = document.getElementById('map-detail');
-      if (detail) detail.innerHTML = `<span style="font-size:1.4rem">\${FLAGS[cc]||''}</span> <b>\${NAMES[cc]||cc}</b> &nbsp;<span style="color:var(--text3);font-size:.75rem">#\${rank}위</span><br><span style="color:var(--accent);font-weight:700">\${val.toLocaleString()}</span> \${label} · <span style="color:var(--text2)">\${pct}%</span>`;
+      if (detail) detail.innerHTML = `<span style="font-size:1.4rem">\${FLAGS[cc]||''}</span> <b>\${getName(cc)}</b> &nbsp;<span style="color:var(--text3);font-size:.75rem">#\${rank}위</span><br><span style="color:var(--accent);font-weight:700">\${val.toLocaleString()}</span> \${label} · <span style="color:var(--text2)">\${pct}%</span>`;
     });
 
   // 버블 (상위 20개국)
@@ -304,7 +330,7 @@ function renderCountryList(sorted, total, unit) {
     const w = ((val / (top[0][1].count || 1)) * 100).toFixed(0);
     return `<div class="cl-row">
       <span class="cl-flag">${FLAGS[cc]||''}</span>
-      <span class="cl-name">${NAMES[cc]||cc}</span>
+      <span class="cl-name">${getName(cc)}</span>
       <div class="cl-bar-wrap"><div class="cl-bar" style="width:${w}%"></div></div>
       <span class="cl-count">${val.toLocaleString()}</span>
       <span class="cl-pct">${pct}%</span>
