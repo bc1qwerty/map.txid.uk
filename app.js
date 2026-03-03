@@ -7,6 +7,31 @@ const LABELS = {
   en: {탐색기:'Explorer', 도구:'Tools', 시각화:'Viz', 통계:'Stats', 노드:'Nodes', 지도:'Map', 포트폴리오:'Portfolio', 전송:'TX', 배우기:'Learn', 앱모음:'Apps'},
   ja: {탐색기:'探索', 도구:'ツール', 시각화:'可視化', 통계:'統計', 노드:'ノード', 지도:'地図', 포트폴리오:'資産', 전송:'送金', 배우기:'学習', 앱모음:'アプリ'},
 };
+
+const i18n = {
+  ko: {
+    loading: '로딩 중…',
+    total_nodes: '총 노드 수', channels: '채널 수', capacity: '총 용량',
+    active_pools: '활성 마이닝 풀', blocks_7d: '최근 7일 블록',
+    node_label: '노드', block_label: '블록',
+    load_fail: '데이터 로드 실패',
+  },
+  en: {
+    loading: 'Loading…',
+    total_nodes: 'Total Nodes', channels: 'Channels', capacity: 'Capacity',
+    active_pools: 'Active Pools', blocks_7d: '7-day Blocks',
+    node_label: 'nodes', block_label: 'blocks',
+    load_fail: 'Failed to load data',
+  },
+  ja: {
+    loading: '読み込み中…',
+    total_nodes: '総ノード数', channels: 'チャンネル数', capacity: '総容量',
+    active_pools: 'アクティブプール', blocks_7d: '7日間ブロック',
+    node_label: 'ノード', block_label: 'ブロック',
+    load_fail: 'データ取得失敗',
+  },
+};
+function t(k){ return (i18n[lang]&&i18n[lang][k])||i18n.ko[k]||k; }
 function setLang(l){
   lang=l; localStorage.setItem('lang',lang);
   const btn=document.getElementById('lang-btn');
@@ -16,6 +41,8 @@ function setLang(l){
     const val=el.dataset[lang]||el.dataset.en||el.dataset.ko;
     if(val) el.textContent=val;
   });
+  // 컨텐츠 재로드
+  if(window._mapData) loadData();
 }
 function toggleLang(){document.getElementById('lang-menu')?.classList.toggle('open');}
 document.addEventListener('click',e=>{const m=document.getElementById('lang-menu');if(m&&!e.target.closest('.lang-dropdown'))m.classList.remove('open');});
@@ -96,7 +123,7 @@ const NAME_TO_ISO2 = {
 async function loadData() {
   const gs = document.getElementById('global-stats');
   const cl = document.getElementById('country-list');
-  gs.innerHTML = '<div style="color:var(--text3);font-size:.8rem;padding:8px">로딩 중…</div>';
+  gs.innerHTML = `<div style="color:var(--text3);font-size:.8rem;padding:8px">${t('loading')}</div>`;
   cl.innerHTML = '';
 
   try {
@@ -109,9 +136,9 @@ async function loadData() {
       const total = countries.reduce((s,n) => s+(n.count||0), 0);
       const s = stats.latest || stats;
       gs.innerHTML = `
-        <div class="gs-card"><div class="gs-val">${(s.node_count||0).toLocaleString()}</div><div class="gs-lbl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> 총 노드 수</div></div>
-        <div class="gs-card"><div class="gs-val">${(s.channel_count||0).toLocaleString()}</div><div class="gs-lbl">채널 수</div></div>
-        <div class="gs-card"><div class="gs-val">${((s.total_capacity||0)/1e8).toFixed(0)} BTC</div><div class="gs-lbl">총 용량</div></div>`;
+        <div class="gs-card"><div class="gs-val">${(s.node_count||0).toLocaleString()}</div><div class="gs-lbl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> ${t('total_nodes')}</div></div>
+        <div class="gs-card"><div class="gs-val">${(s.channel_count||0).toLocaleString()}</div><div class="gs-lbl">${t('channels')}</div></div>
+        <div class="gs-card"><div class="gs-val">${((s.total_capacity||0)/1e8).toFixed(0)} BTC</div><div class="gs-lbl">${t('capacity')}</div></div>`;
 
       const sorted = countries.map(n => [n.iso, {count: n.count, share: n.share}]).sort((a,b)=>b[1].count-a[1].count);
       window._mapData = { type:'ln', data: sorted, total };
@@ -120,8 +147,8 @@ async function loadData() {
     } else {
       const pools = await fetch(`${API}/v1/mining/pools/1w`, {signal: AbortSignal.timeout(10000)}).then(r=>r.json());
       gs.innerHTML = `
-        <div class="gs-card"><div class="gs-val">${pools.pools?.length||0}</div><div class="gs-lbl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle"><path d="M15 4l5 5-11 11H4v-5L15 4z"/><line x1="9" y1="9" x2="15" y2="15"/></svg> 활성 마이닝 풀</div></div>
-        <div class="gs-card"><div class="gs-val">${pools.blockCount||0}</div><div class="gs-lbl">최근 7일 블록</div></div>`;
+        <div class="gs-card"><div class="gs-val">${pools.pools?.length||0}</div><div class="gs-lbl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle"><path d="M15 4l5 5-11 11H4v-5L15 4z"/><line x1="9" y1="9" x2="15" y2="15"/></svg> ${t('active_pools')}</div></div>
+        <div class="gs-card"><div class="gs-val">${pools.blockCount||0}</div><div class="gs-lbl">${t('blocks_7d')}</div></div>`;
 
       // 풀 국가 정보 매핑 (알려진 풀)
       const poolCountry = {
@@ -145,7 +172,7 @@ async function loadData() {
       renderCountryList(sorted.map(([cc,v])=>[cc,{count:v.blocks}]), totalBlocks, '블록');
     }
   } catch(e) {
-    gs.innerHTML = `<div style="color:var(--red);font-size:.8rem">데이터 로드 실패: ${String(e.message).replace(/</g,'&lt;')}</div>`;
+    gs.innerHTML = `<div style="color:var(--red);font-size:.8rem">${t('load_fail')}: ${String(e.message).replace(/</g,'&lt;')}</div>`;
   }
 }
 
@@ -191,7 +218,7 @@ function renderMap(mapData) {
       const val = valMap[cc];
       if (!val) return;
       const pct = ((val / mapData.total) * 100).toFixed(1);
-      const label = currentTab === 'ln' ? '노드' : '블록';
+      const label = currentTab === 'ln' ? t('node_label') : t('block_label');
       tooltip.innerHTML = `<b>${FLAGS[cc]||''} ${NAMES[cc]||cc}</b><br>${val.toLocaleString()} ${label} (${pct}%)`;
       tooltip.style.display = 'block';
     })
@@ -216,7 +243,7 @@ function renderMap(mapData) {
       // 상세 패널 표시
       const pct = ((val / mapData.total) * 100).toFixed(1);
       const rank = mapData.data.findIndex(([c]) => c === cc) + 1;
-      const label = currentTab === 'ln' ? '노드' : '블록';
+      const label = currentTab === 'ln' ? t('node_label') : t('block_label');
       const detail = document.getElementById('map-detail');
       if (detail) detail.innerHTML = `<span style="font-size:1.4rem">\${FLAGS[cc]||''}</span> <b>\${NAMES[cc]||cc}</b> &nbsp;<span style="color:var(--text3);font-size:.75rem">#\${rank}위</span><br><span style="color:var(--accent);font-weight:700">\${val.toLocaleString()}</span> \${label} · <span style="color:var(--text2)">\${pct}%</span>`;
     });
