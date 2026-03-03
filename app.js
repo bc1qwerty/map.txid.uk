@@ -1,4 +1,26 @@
 'use strict';
+
+// ── 언어 ──
+let lang = localStorage.getItem('lang') || 'ko';
+const LABELS = {
+  ko: {탐색기:'탐색기', 도구:'도구', 시각화:'시각화', 통계:'통계', 노드:'노드', 지도:'지도', 포트폴리오:'포트폴리오', 전송:'전송', 배우기:'배우기', 앱모음:'앱모음'},
+  en: {탐색기:'Explorer', 도구:'Tools', 시각화:'Viz', 통계:'Stats', 노드:'Nodes', 지도:'Map', 포트폴리오:'Portfolio', 전송:'TX', 배우기:'Learn', 앱모음:'Apps'},
+  ja: {탐색기:'探索', 도구:'ツール', 시각화:'可視化', 통계:'統計', 노드:'ノード', 지도:'地図', 포트폴리오:'資産', 전송:'送金', 배우기:'学習', 앱모음:'アプリ'},
+};
+function setLang(l){
+  lang=l; localStorage.setItem('lang',lang);
+  const btn=document.getElementById('lang-btn');
+  if(btn) btn.textContent={ko:'KO',en:'EN',ja:'JA'}[lang]||'KO';
+  document.getElementById('lang-menu')?.classList.remove('open');
+  document.querySelectorAll('[data-ko]').forEach(el=>{
+    const val=el.dataset[lang]||el.dataset.en||el.dataset.ko;
+    if(val) el.textContent=val;
+  });
+}
+function toggleLang(){document.getElementById('lang-menu')?.classList.toggle('open');}
+document.addEventListener('click',e=>{const m=document.getElementById('lang-menu');if(m&&!e.target.closest('.lang-dropdown'))m.classList.remove('open');});
+(function(){setLang(lang);})();
+
 const API = 'https://mempool.space/api';
 let currentTab = 'ln';
 
