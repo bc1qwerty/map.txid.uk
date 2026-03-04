@@ -104,3 +104,5 @@ footer { border-top: 1px solid var(--border); padding: 16px 20px; }
 }
 .map-tab-overlay .tab-btn:hover { border-color: var(--accent); color: var(--accent); }
 .map-tab-overlay .tab-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(247,147,26,.15); }
+
+@media(max-width:768px){.appbar{display:none !important;}}
