@@ -145,7 +145,7 @@ const EN_NAMES = {
   MA:'Morocco',EG:'Egypt',TN:'Tunisia',PK:'Pakistan',BD:'Bangladesh',
   LK:'Sri Lanka',NP:'Nepal',MM:'Myanmar',
 };
-function getName(cc){ return lang==='ko' ? (getName(cc)) : (EN_getName(cc)); }
+function getName(cc){ return lang==='ko' ? (NAMES[cc]||cc) : (EN_NAMES[cc]||cc); }
 // ISO3166 alpha2 → approximate centroid [lon, lat]
 const CENTROIDS = {
   US:[-98,38],DE:[10,51],GB:[-2,54],FR:[2,46],NL:[5.3,52],CA:[-96,60],SG:[103.8,1.3],
