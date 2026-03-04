@@ -75,3 +75,32 @@ footer { border-top: 1px solid var(--border); padding: 16px 20px; }
 .lang-menu.open{display:block;}
 .lang-menu button{display:block;width:100%;text-align:left;padding:8px 14px;background:none;border:none;color:var(--text2);font-family:var(--font-ko);font-size:.78rem;cursor:pointer;transition:background .15s,color .15s;}
 .lang-menu button:hover{background:var(--bg3);color:var(--accent);}
+
+/* 지도 위 탭 버튼 overlay */
+.map-wrap { position: relative; }
+.map-tab-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  display: flex;
+  gap: 6px;
+}
+.map-tab-overlay .tab-btn {
+  padding: 5px 10px;
+  font-size: .72rem;
+  backdrop-filter: blur(8px);
+  background: rgba(13,17,23,.75);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text2);
+  font-family: var(--font-ko);
+  transition: all .2s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.map-tab-overlay .tab-btn:hover { border-color: var(--accent); color: var(--accent); }
+.map-tab-overlay .tab-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(247,147,26,.15); }

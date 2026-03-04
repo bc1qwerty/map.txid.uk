@@ -46,8 +46,6 @@
 </div>
       </div>
     <div class="nav-right">
-      <button class="tab-btn active" id="tab-ln" onclick="switchTab('ln')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Lightning</button>
-      <button class="tab-btn" id="tab-mining" onclick="switchTab('mining')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle"><path d="M15 4l5 5-11 11H4v-5L15 4z"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Mining</button>
       <div class="lang-dropdown">
         <button class="lang-btn" id="lang-btn" onclick="toggleLang()" title="언어 변경">KO</button>
         <div class="lang-menu" id="lang-menu">
@@ -63,6 +61,10 @@
 
 <main>
   <div class="map-wrap">
+    <div class="map-tab-overlay">
+      <button class="tab-btn active" id="tab-ln" onclick="switchTab('ln')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> <span data-i18n="라이트닝">Lightning</span></button>
+      <button class="tab-btn" id="tab-mining" onclick="switchTab('mining')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle"><path d="M15 4l5 5-11 11H4v-5L15 4z"/><line x1="9" y1="9" x2="15" y2="15"/></svg> <span data-i18n="채굴 풀">Mining</span></button>
+    </div>
     <svg id="world-map" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet"></svg>
     <div id="map-tooltip" class="map-tooltip"></div>
   </div>
