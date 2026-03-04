@@ -87,8 +87,8 @@
 <script src="app.js"></script>
 
 <style>
-.appbar{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;padding:8px 10px;border-top:1px solid var(--border);background:var(--bg2);position:fixed;bottom:0;left:0;right:0;z-index:90;backdrop-filter:blur(10px)}
-.appbar a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 4px;border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--text2);font-size:.58rem;font-family:var(--font-ko);background:var(--bg3);transition:all .2s;text-align:center}
+.appbar{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:12px 20px;border-top:1px solid var(--border);background:var(--bg2);position:fixed;bottom:0;left:0;right:0;z-index:90;backdrop-filter:blur(10px)}
+.appbar a{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--text2);font-size:.62rem;font-family:var(--font-ko);background:var(--bg3);min-width:56px;transition:all .2s}
 .appbar a:hover,.appbar a.active{border-color:var(--accent);color:var(--accent)}
 .appbar a svg{flex-shrink:0}
 .appbar a svg{flex-shrink:0}
