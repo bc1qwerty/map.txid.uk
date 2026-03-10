@@ -67,6 +67,13 @@
   </div>
 </header>
 
+<div class="learn-links" id="learn-links">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+  <span class="learn-label" data-ko="더 알아보기" data-en="Learn more" data-ja="もっと学ぶ">더 알아보기</span>
+  <a class="learn-chip" data-slug="bitcoin-mining" data-ko="비트코인 채굴" data-en="Bitcoin Mining" data-ja="マイニング" href="https://learn.txid.uk/ko/blog/bitcoin-mining/" target="_blank" rel="noopener">비트코인 채굴</a>
+  <a class="learn-chip" data-slug="lightning-network-intro" data-ko="라이트닝 네트워크 입문" data-en="Lightning Network Intro" data-ja="ライトニング入門" href="https://learn.txid.uk/ko/blog/lightning-network-intro/" target="_blank" rel="noopener">라이트닝 네트워크 입문</a>
+</div>
+
 <main>
   <div class="map-wrap">
     <div class="map-tab-overlay">
@@ -93,6 +100,16 @@
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
 <script src="app.js"></script>
+<style>
+.learn-links{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;margin:10px auto;max-width:var(--max-w);font-size:.78rem}
+.learn-links svg{color:var(--text3);flex-shrink:0}
+.learn-label{color:var(--text3);font-family:var(--font-ko);white-space:nowrap;margin-right:2px}
+.learn-chip{color:var(--text2);text-decoration:none;padding:3px 10px;border:1px solid var(--border);border-radius:4px;font-family:var(--font-ko);font-size:.72rem;transition:all .15s;white-space:nowrap}
+.learn-chip:hover{border-color:var(--accent);color:var(--accent)}
+</style>
+<script>
+(function(){var o=setLang;setLang=function(l){o(l);var g=localStorage.getItem('lang')||'ko';document.querySelectorAll('#learn-links a[data-slug]').forEach(function(a){a.href='https://learn.txid.uk/'+g+'/blog/'+a.dataset.slug+'/';});};setLang(localStorage.getItem('lang')||'ko');})();
+</script>
 
 <style>
 .appbar{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:12px 20px;border-top:1px solid var(--border);background:var(--bg2);position:fixed;bottom:0;left:0;right:0;z-index:90;backdrop-filter:blur(10px)}
