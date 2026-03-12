@@ -8,18 +8,6 @@ header { background: var(--bg2); border-bottom: 1px solid var(--border); positio
 .nav-right { margin-left: auto; display: flex; align-items: center; gap: 6px; }
 .theme-btn { background: none; border: 1px solid var(--border); color: var(--text2); width: 32px; height: 32px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; }
 .theme-btn:hover { border-color: var(--accent); color: var(--accent); }
-.tools-dropdown { position: relative; }
-.tools-dropdown-btn { background: none; border: none; color: var(--text2); font-family: var(--font-ko); font-size: .8rem; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: all .2s; white-space: nowrap; display: flex; align-items: center; gap: 3px; position: relative; }
-.tools-dropdown-btn::after { content: ''; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); width: 0; height: 2px; background: var(--accent); border-radius: 1px; transition: width .2s; }
-.tools-dropdown-btn:hover, .tools-dropdown:hover .tools-dropdown-btn { color: var(--accent); background: rgba(247,147,26,.06); }
-.tools-dropdown:hover .tools-dropdown-btn::after { width: 60%; }
-.tools-dropdown-menu { display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; min-width: 220px; z-index: 200; box-shadow: 0 8px 24px rgba(0,0,0,.4); overflow: hidden; }
-.tools-dropdown:hover .tools-dropdown-menu { display: block; }
-.tools-dropdown-menu a { display: flex; align-items: center; gap: 10px; padding: 9px 14px; color: var(--text2); font-family: var(--font-ko); font-size: .78rem; text-decoration: none; transition: background .15s, color .15s; }
-.tools-dropdown-menu a:hover { background: var(--bg3); color: var(--accent); }
-.tools-dropdown-menu a svg { flex-shrink: 0; }
-.tools-dropdown-menu .dd-name { display: block; color: inherit; }
-.tools-dropdown-menu .dd-sub { display: block; font-size: .65rem; color: var(--text3); }
 :root {
   --font: 'Space Mono', monospace; --font-ko: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
   --bg: #0d1117; --bg2: #161b22; --bg3: #21262d;
@@ -35,7 +23,6 @@ body { font-family: var(--font-ko); background: var(--bg); color: var(--text1); 
 .nav-links a:hover { color: var(--accent); background: rgba(247,147,26,.06); }
 .nav-links a.active { color: var(--accent); background: rgba(247,147,26,.08); }
 .nav-links a.active::after { width: 60%; }
-.tools-dropdown:hover nav { display: flex; gap: 14px; flex: 1; }
 nav a { color: var(--text2); text-decoration: none; font-size: .8rem; transition: color .2s; }
 nav a.active { color: var(--accent); }
 .header-controls { display: flex; align-items: center; gap: 8px; margin-left: auto; }
