@@ -41,7 +41,6 @@
     <span class="logo-sep">/</span>
     <span class="logo-sub">Map</span>
     <div class="nav-links">
-      <a href="https://txid.uk" data-ko="홈" data-en="Home" data-ja="ホーム">홈</a>
       <a href="https://txid.uk/#/mining" data-ko="채굴" data-en="Mining" data-ja="マイニング">채굴</a>
       <a href="https://learn.txid.uk" target="_blank" data-ko="공부방" data-en="The Study" data-ja="学習室">공부방</a>
     </div>
@@ -122,7 +121,8 @@
 .appbar a{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--text2);font-size:.62rem;font-family:var(--font-ko);background:var(--bg3);min-width:56px;transition:all .2s}
 .appbar a:hover,.appbar a.active{border-color:var(--accent);color:var(--accent)}
 .appbar a svg{flex-shrink:0}
-.nav-links{display:flex;gap:4px;}
+.nav-links{display:flex;gap:4px;margin-left:12px;padding-left:12px;border-left:1px solid var(--border);}
+.logo-sub{display:inline-block;min-width:65px;}
 .nav-links a{color:var(--text2);font-size:.78rem;padding:5px 10px;border-radius:4px;font-family:var(--font-ko);transition:all .2s;white-space:nowrap;}
 .nav-links a:hover{color:var(--accent);background:rgba(247,147,26,.06);}
 @media(max-width:600px){.nav-links{display:none;}}
