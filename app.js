@@ -1,3 +1,5 @@
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+async function fetchRetry(url,timeout,retries){for(let i=0,m=retries||2;i<=m;i++){try{return await fetch(url,{signal:AbortSignal.timeout(timeout||10000)});}catch(e){if(i>=m)throw e;await new Promise(r=>setTimeout(r,1000<<i));}}}
 'use strict';
 
 // ── 언어 ──
@@ -44,8 +46,8 @@ function setLang(l){
   // 컨텐츠 재로드
   if(window._mapData) loadData();
 }
-function toggleLang(){document.getElementById('lang-menu')?.classList.toggle('open');}
-document.addEventListener('click',e=>{const m=document.getElementById('lang-menu');if(m&&!e.target.closest('.lang-dropdown'))m.classList.remove('open');});
+function toggleLang(){const m=document.getElementById('lang-menu');m?.classList.toggle('open');document.getElementById('lang-btn')?.setAttribute('aria-expanded',m?.classList.contains('open')||false);}
+document.addEventListener('click',e=>{const m=document.getElementById('lang-menu');if(m&&!e.target.closest('.lang-dropdown')){m.classList.remove('open');document.getElementById('lang-btn')?.setAttribute('aria-expanded','false');}});
 (function(){setLang(lang);})();
 
 const API = 'https://mempool.space/api';
@@ -194,8 +196,8 @@ async function loadData() {
   try {
     if (currentTab === 'ln') {
       const [countries, stats] = await Promise.all([
-        fetch(`${API}/v1/lightning/nodes/countries`, {signal: AbortSignal.timeout(10000)}).then(r=>r.json()),
-        fetch(`${API}/v1/lightning/statistics/latest`, {signal: AbortSignal.timeout(10000)}).then(r=>r.json()),
+        fetchRetry(`${API}/v1/lightning/nodes/countries`,10000).then(r=>r.json()),
+        fetchRetry(`${API}/v1/lightning/statistics/latest`,10000).then(r=>r.json()),
       ]);
       // API 응답: 배열 [{iso, count, ...}, ...]
       const total = countries.reduce((s,n) => s+(n.count||0), 0);
@@ -210,7 +212,7 @@ async function loadData() {
       renderMap(window._mapData);
       renderCountryList(sorted, total, 'nodes');
     } else {
-      const pools = await fetch(`${API}/v1/mining/pools/1w`, {signal: AbortSignal.timeout(10000)}).then(r=>r.json());
+      const pools = await fetchRetry(`${API}/v1/mining/pools/1w`,10000).then(r=>r.json());
       gs.innerHTML = `
         <div class="gs-card"><div class="gs-val">${pools.pools?.length||0}</div><div class="gs-lbl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle"><path d="M15 4l5 5-11 11H4v-5L15 4z"/><line x1="9" y1="9" x2="15" y2="15"/></svg> ${t('active_pools')}</div></div>
         <div class="gs-card"><div class="gs-val">${pools.blockCount||0}</div><div class="gs-lbl">${t('blocks_7d')}</div></div>`;
@@ -237,7 +239,8 @@ async function loadData() {
       renderCountryList(sorted.map(([cc,v])=>[cc,{count:v.blocks}]), totalBlocks, '블록');
     }
   } catch(e) {
-    gs.innerHTML = `<div style="color:var(--red);font-size:.8rem">${t('load_fail')}: ${String(e.message).replace(/</g,'&lt;')}</div>`;
+    console.error('loadData error:', e);
+    gs.innerHTML = `<div style="color:var(--red);font-size:.8rem">${escHtml(t('load_fail'))}. <button onclick="loadData()" style="margin-left:8px;padding:2px 8px;font-size:.72rem;cursor:pointer">재시도</button></div>`;
   }
 }
 
@@ -284,7 +287,7 @@ function renderMap(mapData) {
       if (!val) return;
       const pct = ((val / mapData.total) * 100).toFixed(1);
       const label = currentTab === 'ln' ? t('node_label') : t('block_label');
-      tooltip.innerHTML = `<b>${FLAGS[cc]||''} ${getName(cc)}</b><br>${val.toLocaleString()} ${label} (${pct}%)`;
+      tooltip.innerHTML = `<b>${escHtml(FLAGS[cc]||'')} ${escHtml(getName(cc))}</b><br>${val.toLocaleString()} ${escHtml(label)} (${pct}%)`;
       tooltip.style.display = 'block';
     })
     .on('mousemove', e => {
@@ -339,8 +342,8 @@ function renderCountryList(sorted, total, unit) {
     const pct = ((val / total) * 100).toFixed(1);
     const w = ((val / (top[0][1].count || 1)) * 100).toFixed(0);
     return `<div class="cl-row">
-      <span class="cl-flag">${FLAGS[cc]||''}</span>
-      <span class="cl-name">${getName(cc)}</span>
+      <span class="cl-flag">${escHtml(FLAGS[cc]||'')}</span>
+      <span class="cl-name">${escHtml(getName(cc))}</span>
       <div class="cl-bar-wrap"><div class="cl-bar" style="width:${w}%"></div></div>
       <span class="cl-count">${val.toLocaleString()}</span>
       <span class="cl-pct">${pct}%</span>
@@ -351,7 +354,7 @@ function renderCountryList(sorted, total, unit) {
 // 세계지도 GeoJSON 로드 (Natural Earth 110m)
 async function init() {
   try {
-    const geo = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json', {signal: AbortSignal.timeout(15000)}).then(r=>r.json());
+    const geo = await fetchRetry('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json',15000).then(r=>r.json());
     worldGeo = topojson.feature(geo, geo.objects.countries);
     loadData();
   } catch(e) {
