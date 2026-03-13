@@ -46,7 +46,7 @@
     </div>
     <div class="nav-right">
       <div id="txid-auth-mount" class="auth-mount"></div>
-      <div class="lang-dropdown">
+      <div class="lang-dropdown desktop-only">
         <button class="lang-btn" id="lang-btn" title="언어 변경" aria-label="언어 선택" aria-expanded="false">KO</button>
         <div class="lang-menu" id="lang-menu" role="menu" aria-label="언어 선택">
           <button>한국어</button>
@@ -54,7 +54,29 @@
           <button>日本語</button>
         </div>
       </div>
-      <button class="theme-btn" id="theme-btn" title="테마 전환" aria-label="테마 전환"></button>
+      <button class="theme-btn desktop-only" id="theme-btn" title="테마 전환" aria-label="테마 전환"></button>
+      <!-- 햄버거 (모바일만) -->
+      <div class="hamburger-wrap mobile-only">
+        <button class="theme-btn" id="hamburger-btn" aria-label="메뉴" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="hamburger-panel" id="hamburger-panel">
+          <div class="settings-section">
+            <div class="settings-label" data-ko="언어" data-en="Language" data-ja="言語">언어</div>
+            <div class="settings-lang-row">
+              <button class="settings-lang-btn" data-lang="ko">KO</button>
+              <button class="settings-lang-btn" data-lang="en">EN</button>
+              <button class="settings-lang-btn" data-lang="ja">JA</button>
+            </div>
+          </div>
+          <div class="settings-section settings-section--border">
+            <button class="settings-item" id="hamburger-theme-btn">
+              <span id="hamburger-theme-icon"></span>
+              <span id="hamburger-theme-label" data-ko="테마 전환" data-en="Toggle Theme" data-ja="テーマ切替">테마 전환</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </header>

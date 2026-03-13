@@ -132,6 +132,38 @@ footer { border-top: 1px solid var(--border); padding: 16px 20px; }
 .nav-links a:hover{color:var(--accent);background:rgba(247,147,26,.06);}
 @media(max-width:600px){.nav-links{display:none;}}
 
+/* ── 데스크톱/모바일 토글 ── */
+.mobile-only { display: none; }
+@media (max-width: 768px) {
+  .desktop-only { display: none !important; }
+  .mobile-only { display: block; }
+}
+
+/* ── 햄버거 메뉴 (모바일) ── */
+.hamburger-wrap { position: relative; }
+.hamburger-panel {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  min-width: 200px;
+  z-index: 300;
+  box-shadow: 0 8px 32px rgba(0,0,0,.5);
+  overflow: hidden;
+}
+.hamburger-panel.open { display: block; }
+.settings-section { padding: 8px 6px; }
+.settings-section--border { border-top: 1px solid var(--border); }
+.settings-label { font-size: .68rem; color: var(--text3); font-family: var(--font-ko); padding: 2px 8px 6px; text-transform: uppercase; letter-spacing: .06em; }
+.settings-lang-row { display: flex; gap: 4px; padding: 2px 8px 4px; }
+.settings-lang-btn { flex: 1; background: var(--bg3); border: 1px solid var(--border); color: var(--text2); font-family: var(--font); font-size: .72rem; padding: 5px 0; border-radius: 5px; cursor: pointer; transition: all .2s; text-align: center; }
+.settings-lang-btn:hover, .settings-lang-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(247,147,26,.08); }
+.settings-item { display: flex; align-items: center; gap: 9px; width: 100%; background: none; border: none; color: var(--text2); font-family: var(--font-ko); font-size: .78rem; padding: 7px 10px; border-radius: 6px; cursor: pointer; transition: background .15s, color .15s; text-align: left; }
+.settings-item:hover { background: var(--bg3); color: var(--accent); }
+
 /* Focus indicator for keyboard navigation (WCAG 2.1 AA) */
 :focus-visible{outline:2px solid var(--accent,#f7931a);outline-offset:2px;border-radius:2px}
 :focus:not(:focus-visible){outline:none}
