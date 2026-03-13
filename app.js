@@ -190,7 +190,7 @@ const NAME_TO_ISO2 = {
 async function loadData() {
   const gs = document.getElementById('global-stats');
   const cl = document.getElementById('country-list');
-  gs.innerHTML = `<div style="color:var(--text3);font-size:.8rem;padding:8px">${t('loading')}</div>`;
+  gs.innerHTML = `<div class="loading-msg">${t('loading')}</div>`;
   cl.innerHTML = '';
 
   try {
@@ -203,7 +203,7 @@ async function loadData() {
       const total = countries.reduce((s,n) => s+(n.count||0), 0);
       const s = stats.latest || stats;
       gs.innerHTML = `
-        <div class="gs-card"><div class="gs-val">${(s.node_count||0).toLocaleString()}</div><div class="gs-lbl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> ${t('total_nodes')}</div></div>
+        <div class="gs-card"><div class="gs-val">${(s.node_count||0).toLocaleString()}</div><div class="gs-lbl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> ${t('total_nodes')}</div></div>
         <div class="gs-card"><div class="gs-val">${(s.channel_count||0).toLocaleString()}</div><div class="gs-lbl">${t('channels')}</div></div>
         <div class="gs-card"><div class="gs-val">${((s.total_capacity||0)/1e8).toFixed(0)} BTC</div><div class="gs-lbl">${t('capacity')}</div></div>`;
 
@@ -214,7 +214,7 @@ async function loadData() {
     } else {
       const pools = await fetchRetry(`${API}/v1/mining/pools/1w`,10000).then(r=>r.json());
       gs.innerHTML = `
-        <div class="gs-card"><div class="gs-val">${pools.pools?.length||0}</div><div class="gs-lbl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle"><path d="M15 4l5 5-11 11H4v-5L15 4z"/><line x1="9" y1="9" x2="15" y2="15"/></svg> ${t('active_pools')}</div></div>
+        <div class="gs-card"><div class="gs-val">${pools.pools?.length||0}</div><div class="gs-lbl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M15 4l5 5-11 11H4v-5L15 4z"/><line x1="9" y1="9" x2="15" y2="15"/></svg> ${t('active_pools')}</div></div>
         <div class="gs-card"><div class="gs-val">${pools.blockCount||0}</div><div class="gs-lbl">${t('blocks_7d')}</div></div>`;
 
       // 풀 국가 정보 매핑 (알려진 풀)
@@ -240,16 +240,24 @@ async function loadData() {
     }
   } catch(e) {
     console.error('loadData error:', e);
-    gs.innerHTML = `<div style="color:var(--red);font-size:.8rem">${escHtml(t('load_fail'))}. <button onclick="loadData()" style="margin-left:8px;padding:2px 8px;font-size:.72rem;cursor:pointer">재시도</button></div>`;
+    gs.innerHTML = '';
+    const errDiv = document.createElement('div'); errDiv.className = 'error-msg';
+    errDiv.textContent = t('load_fail') + '. ';
+    const retryBtn = document.createElement('button'); retryBtn.className = 'retry-btn'; retryBtn.textContent = '재시도';
+    retryBtn.addEventListener('click', loadData);
+    errDiv.appendChild(retryBtn);
+    gs.appendChild(errDiv);
   }
 }
 
 function renderMap(mapData) {
   if (!mapData || !worldGeo) return;
+  const container = document.getElementById('world-map');
   const svg = d3.select('#world-map');
   const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
-  const W = 1000, H = 500;
-  const proj = d3.geoNaturalEarth1().scale(153).translate([W/2, H/2]);
+  const W = Math.min(container.clientWidth || 1000, 1000);
+  const H = W / 2;
+  const proj = d3.geoNaturalEarth1().scale(W * 0.153).translate([W/2, H/2]);
   const path = d3.geoPath().projection(proj);
   const tooltip = document.getElementById('map-tooltip');
 
@@ -269,6 +277,10 @@ function renderMap(mapData) {
       : d3.interpolate('#eaeef2', '#bc4e00'));
 
   svg.selectAll('*').remove();
+  svg.attr('viewBox', `0 0 ${W} ${H}`)
+     .attr('preserveAspectRatio', 'xMidYMid meet')
+     .style('width', '100%')
+     .style('height', 'auto');
 
   svg.append('rect').attr('width', W).attr('height', H).attr('fill', isDark ? '#0d1117' : '#f6f8fa');
 
@@ -288,14 +300,14 @@ function renderMap(mapData) {
       const pct = ((val / mapData.total) * 100).toFixed(1);
       const label = currentTab === 'ln' ? t('node_label') : t('block_label');
       tooltip.innerHTML = `<b>${escHtml(FLAGS[cc]||'')} ${escHtml(getName(cc))}</b><br>${val.toLocaleString()} ${escHtml(label)} (${pct}%)`;
-      tooltip.style.display = 'block';
+      tooltip.classList.remove('hidden');
     })
     .on('mousemove', e => {
       const rect = document.getElementById('world-map').getBoundingClientRect();
-      tooltip.style.left = (e.clientX - rect.left + 12) + 'px';
-      tooltip.style.top = (e.clientY - rect.top - 10) + 'px';
+      tooltip.style.setProperty('--x', (e.clientX - rect.left + 12) + 'px');
+      tooltip.style.setProperty('--y', (e.clientY - rect.top - 10) + 'px');
     })
-    .on('mouseout', () => tooltip.style.display = 'none')
+    .on('mouseout', () => tooltip.classList.add('hidden'))
     .on('click', (e, d) => {
       const cc = NAME_TO_ISO2[d.properties.name] || d.properties.iso_a2;
       const val = valMap[cc];
@@ -313,12 +325,12 @@ function renderMap(mapData) {
       const rank = mapData.data.findIndex(([c]) => c === cc) + 1;
       const label = currentTab === 'ln' ? t('node_label') : t('block_label');
       const detail = document.getElementById('map-detail');
-      if (detail) detail.innerHTML = `<span style="font-size:1.4rem">\${FLAGS[cc]||''}</span> <b>\${getName(cc)}</b> &nbsp;<span style="color:var(--text3);font-size:.75rem">#\${rank}위</span><br><span style="color:var(--accent);font-weight:700">\${val.toLocaleString()}</span> \${label} · <span style="color:var(--text2)">\${pct}%</span>`;
+      if (detail) detail.innerHTML = `<span class="flag-lg">\${FLAGS[cc]||''}</span> <b>\${getName(cc)}</b> &nbsp;<span class="rank-label">#\${rank}위</span><br><span class="accent fw700">\${val.toLocaleString()}</span> \${label} · <span class="pct-label">\${pct}%</span>`;
     });
 
   // 버블 (상위 20개국)
   const top20 = mapData.data.slice(0, 20);
-  const rScale = d3.scaleSqrt().domain([0, maxVal]).range([0, 28]);
+  const rScale = d3.scaleSqrt().domain([0, maxVal]).range([0, W * 0.028]);
 
   top20.forEach(([cc, v]) => {
     const cen = CENTROIDS[cc];
@@ -344,7 +356,7 @@ function renderCountryList(sorted, total, unit) {
     return `<div class="cl-row">
       <span class="cl-flag">${escHtml(FLAGS[cc]||'')}</span>
       <span class="cl-name">${escHtml(getName(cc))}</span>
-      <div class="cl-bar-wrap"><div class="cl-bar" style="width:${w}%"></div></div>
+      <div class="cl-bar-wrap"><div class="cl-bar" style="--w:${w}%"></div></div>
       <span class="cl-count">${val.toLocaleString()}</span>
       <span class="cl-pct">${pct}%</span>
     </div>`;
@@ -364,3 +376,21 @@ async function init() {
   }
 }
 init();
+
+// ── 이벤트 리스너 (인라인 onclick 대체) ──
+document.getElementById('lang-btn')?.addEventListener('click', toggleLang);
+document.querySelectorAll('#lang-menu button').forEach(function(btn) {
+  var lang = btn.textContent === '한국어' ? 'ko' : btn.textContent === 'English' ? 'en' : 'ja';
+  btn.addEventListener('click', function() { setLang(lang); });
+});
+document.getElementById('theme-btn')?.addEventListener('click', toggleTheme);
+document.getElementById('tab-ln')?.addEventListener('click', function() { switchTab('ln'); });
+document.getElementById('tab-mining')?.addEventListener('click', function() { switchTab('mining'); });
+
+// 반응형 리사이즈 핸들러
+window.addEventListener('resize', function() {
+  clearTimeout(window._mapResize);
+  window._mapResize = setTimeout(function() {
+    if (window._mapData) renderMap(window._mapData);
+  }, 300);
+});
