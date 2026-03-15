@@ -35,7 +35,7 @@ const i18n = {
 };
 function t(k){ return (i18n[lang]&&i18n[lang][k])||i18n.ko[k]||k; }
 function setLang(l){
-  lang=l; localStorage.setItem('lang',lang);
+  lang=l; localStorage.setItem('lang',lang); document.documentElement.lang=lang;
   const btn=document.getElementById('lang-btn');
   if(btn) btn.textContent={ko:'KO',en:'EN',ja:'JA'}[lang]||'KO';
   document.getElementById('lang-menu')?.classList.remove('open');
