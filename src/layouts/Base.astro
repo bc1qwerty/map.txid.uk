@@ -1,0 +1,57 @@
+---
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  <link rel="canonical" href="https://map.txid.uk/">
+  <link rel="alternate" hreflang="ko" href="https://map.txid.uk/">
+  <link rel="alternate" hreflang="en" href="https://map.txid.uk/">
+  <link rel="alternate" hreflang="ja" href="https://map.txid.uk/">
+  <link rel="alternate" hreflang="x-default" href="https://map.txid.uk/">
+  <meta name="keywords" content="bitcoin node map, lightning nodes by country, mining pool distribution, 비트코인 노드 지도">
+  <meta name="theme-color" content="#f7931a">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="apple-touch-icon" href="/icon-192.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="@bc1qwerty">
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={description}>
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Bitcoin Node Map",
+    "url": "https://map.txid.uk",
+    "description": "World map of Bitcoin Lightning nodes and mining pool distribution",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  })} />
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" integrity="sha384-CjloA8y00+1SDAUkjs099PVfnY2KmDC2BZnws9kh8D/lX1s46w6EPhpXdqMfjK6i" crossorigin="anonymous" is:inline></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js" integrity="sha384-Ukv1p/xTma6P4/2bY5KzWBw+ydSpXmhCMtyciIQVDJ1RmOxtCYNMF1uXT9T63H67" crossorigin="anonymous" is:inline></script>
+  <script src="https://apps.txid.uk/global-nav.js" crossorigin="anonymous" defer is:inline></script>
+</head>
+<body>
+  <a href="#main" class="skip-link">본문으로 건너뛰기</a>
+  <slot />
+  <script src="https://apps.txid.uk/learn-links.js" is:inline></script>
+  <script data-goatcounter="https://txid.goatcounter.com/count" src="https://gc.zgo.at/count.js" async is:inline></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-J1ZJM5KK20" is:inline></script>
+  <script src="https://apps.txid.uk/gtag-init.js" data-ga-id="G-J1ZJM5KK20" is:inline></script>
+  <script src="https://api.txid.uk/txid-auth.js" crossorigin="anonymous" defer is:inline></script>
+</body>
+</html>
