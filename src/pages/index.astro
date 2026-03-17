@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
-import Header from '../components/Header.astro';
-import AppBar from '../components/AppBar.astro';
+import Header from '@txid/ui/components/Header.astro';
+import AppBar from '@txid/ui/components/AppBar.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
 ---
@@ -10,7 +10,7 @@ import '../styles/global.css';
   title="Bitcoin Lightning Node & Mining Pool World Map | txid.uk"
   description="비트코인 라이트닝 노드 및 채굴 풀의 국가별 분포를 세계 지도 위에 시각화."
 >
-  <Header />
+  <Header sub="Map" />
 
   <div class="learn-links" id="learn-links">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-noshrink" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
@@ -36,7 +36,7 @@ import '../styles/global.css';
     </div>
   </main>
 
-  <AppBar />
+  <AppBar activeHost="map.txid.uk" />
   <Footer />
 
   <script>

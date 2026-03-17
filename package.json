@@ -12,6 +12,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@txid/ui": "file:../txid-ui",
     "astro": "^6.0.5"
   }
 }
