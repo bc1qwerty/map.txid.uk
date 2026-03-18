@@ -15,15 +15,15 @@ export function getStaticPaths() {
 const { lang } = Astro.params;
 
 const titles: Record<string, string> = {
-  ko: 'Bitcoin Lightning 노드 & 채굴 풀 세계 지도 | txid.uk',
-  en: 'Bitcoin Lightning Node & Mining Pool World Map | txid.uk',
-  ja: 'Bitcoin Lightning ノード & マイニングプール 世界地図 | txid.uk',
+  ko: 'Bitcoin Lightning 노드 지도 & 노드 탐색기 | txid.uk',
+  en: 'Bitcoin Lightning Node Map & Node Explorer | txid.uk',
+  ja: 'Bitcoin Lightning ノード地図 & ノード探索 | txid.uk',
 };
 
 const descriptions: Record<string, string> = {
-  ko: '비트코인 라이트닝 노드 및 채굴 풀의 국가별 분포를 세계 지도 위에 시각화.',
-  en: 'Visualize global distribution of Bitcoin Lightning nodes and mining pools on a world map.',
-  ja: 'ビットコイン ライトニングノードとマイニングプールの国別分布を世界地図上で可視化。',
+  ko: '비트코인 라이트닝 노드 및 채굴 풀의 국가별 분포를 세계 지도 위에 시각화. 상위 노드 용량·채널 수, 노드 검색, 네트워크 통계.',
+  en: 'Visualize global distribution of Bitcoin Lightning nodes and mining pools on a world map. Top node capacity, channels, node search, network statistics.',
+  ja: 'ビットコイン ライトニングノードとマイニングプールの国別分布を世界地図上で可視化。上位ノード容量・チャネル数、ノード検索、ネットワーク統計。',
 };
 
 const i18n: Record<string, Record<string, string>> = {
@@ -44,7 +44,7 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
   description={descriptions[lang!] || descriptions.en}
   lang={lang!}
 >
-  <Header sub="Map" />
+  <Header sub="Map & Nodes" />
 
   <div class="learn-links" id="learn-links">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-noshrink" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
@@ -70,6 +70,31 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
     <aside class="map-data-col">
       <div id="global-stats" class="global-stats" aria-live="polite"></div>
       <div id="country-list" class="country-list" aria-live="polite"></div>
+
+      <!-- Node Search (Lightning tab only) -->
+      <div class="sidebar-section ln-only" id="node-search-section">
+        <h3 class="section-title" data-ko="노드 검색" data-en="Node Search" data-ja="ノード検索">Node Search</h3>
+        <div class="node-search-row">
+          <input type="text" id="node-search-input" class="search-input" data-ko="노드 별칭 또는 pubkey..." data-en="Node alias or pubkey..." data-ja="ノードエイリアスまたはpubkey..." placeholder="Node alias or pubkey..." />
+          <button id="node-search-btn" class="search-btn" data-ko="검색" data-en="Search" data-ja="検索">Search</button>
+        </div>
+        <div id="node-search-results"></div>
+      </div>
+
+      <!-- Top Nodes (Lightning tab only) -->
+      <div class="sidebar-section ln-only" id="top-nodes-section">
+        <h3 class="section-title" data-ko="상위 노드" data-en="Top Nodes" data-ja="トップノード">Top Nodes</h3>
+        <div id="top-nodes" class="node-list"></div>
+      </div>
+
+      <!-- Node Detail (shown on click/search) -->
+      <div id="node-detail" class="node-detail hidden"></div>
+
+      <!-- Network History (Lightning tab only) -->
+      <div class="sidebar-section ln-only" id="network-history-section">
+        <h3 class="section-title" data-ko="네트워크 추이" data-en="Network History" data-ja="ネットワーク推移">Network History</h3>
+        <div id="network-chart"></div>
+      </div>
     </aside>
   </main>
 
@@ -112,6 +137,13 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
         active_pools: '활성 마이닝 풀', blocks_7d: '최근 7일 블록',
         node_label: '노드', block_label: '블록',
         load_fail: '데이터 로드 실패',
+        searching: '검색 중…', no_results: '검색 결과가 없습니다.',
+        search_error: '검색 오류가 발생했습니다.',
+        total_capacity: '총 용량', active: '활성', country: '국가',
+        first_seen: '첫 등장', last_update: '마지막 업데이트', unknown: '알 수 없음',
+        node_load_fail: '노드 정보 로드 실패',
+        total_node_count: '총 노드 수', channel_count: '채널 수',
+        total_capacity_label: '총 용량', reference: '기준', change_2y: '2년 전 대비 변화',
       },
       en: {
         loading: 'Loading…',
@@ -119,6 +151,13 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
         active_pools: 'Active Pools', blocks_7d: '7-day Blocks',
         node_label: 'nodes', block_label: 'blocks',
         load_fail: 'Failed to load data',
+        searching: 'Searching...', no_results: 'No results found.',
+        search_error: 'Search error occurred.',
+        total_capacity: 'Total Capacity', active: 'active', country: 'Country',
+        first_seen: 'First Seen', last_update: 'Last Updated', unknown: 'Unknown',
+        node_load_fail: 'Failed to load node info',
+        total_node_count: 'Total Nodes', channel_count: 'Channels',
+        total_capacity_label: 'Total Capacity', reference: 'Reference', change_2y: 'Change over 2 years',
       },
       ja: {
         loading: '読み込み中…',
@@ -126,6 +165,13 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
         active_pools: 'アクティブプール', blocks_7d: '7日間ブロック',
         node_label: 'ノード', block_label: 'ブロック',
         load_fail: 'データ取得失敗',
+        searching: '検索中…', no_results: '検索結果がありません。',
+        search_error: '検索中にエラーが発生しました。',
+        total_capacity: '総容量', active: 'アクティブ', country: '国',
+        first_seen: '初出現', last_update: '最終更新', unknown: '不明',
+        node_load_fail: 'ノード情報の読み込みに失敗しました',
+        total_node_count: '総ノード数', channel_count: 'チャネル数',
+        total_capacity_label: '総容量', reference: '基準', change_2y: '2年前からの変化',
       },
     };
 
@@ -214,6 +260,11 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
       currentTab = tab;
       document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
       document.getElementById('tab-' + tab)?.classList.add('active');
+      // Show/hide Lightning-only sections
+      document.querySelectorAll('.ln-only').forEach(function(el) {
+        el.style.display = tab === 'ln' ? '' : 'none';
+      });
+      document.getElementById('node-detail')?.classList.add('hidden');
       loadData();
     }
 
@@ -348,6 +399,9 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
           window._mapData = { type: 'ln', data: sorted, total: total };
           renderMap(window._mapData);
           renderCountryList(sorted, total, 'nodes');
+          // Load node explorer data for Lightning tab
+          loadTopNodes();
+          loadNetworkHistory();
         } else {
           const pools = await fetchRetry(API + '/v1/mining/pools/1w', 10000).then(function(r) { return r.json(); });
           gs.innerHTML =
@@ -949,6 +1003,101 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
       }).join('');
     }
 
+    // ── Node Explorer Functions (merged from nodes.txid.uk) ──
+    function renderTopNodes(nodes) {
+      var el = document.getElementById('top-nodes');
+      if (!el) return;
+      if (!nodes || !nodes.length) { el.innerHTML = '<div class="empty-msg">' + t('no_results') + '</div>'; return; }
+      el.innerHTML = nodes.slice(0, 10).map(function(n, i) {
+        return '<div class="node-item" data-pubkey="' + escHtml(n.publicKey) + '" role="button" tabindex="0">' +
+          '<span class="node-alias">#' + (i + 1) + ' ' + (escHtml(n.alias) || n.publicKey.slice(0, 16) + '…') + '</span>' +
+          '<span class="node-capacity">' + ((n.capacity || 0) / 1e8).toFixed(2) + ' BTC</span>' +
+        '</div>';
+      }).join('');
+    }
+
+    async function loadTopNodes() {
+      var el = document.getElementById('top-nodes');
+      if (!el) return;
+      el.innerHTML = '<div class="empty-msg">' + t('loading') + '</div>';
+      try {
+        var nodes = await fetchRetry(API + '/v1/lightning/nodes/rankings/connectivity', 10000).then(function(r) { return r.json(); });
+        renderTopNodes(nodes);
+      } catch (e) {
+        console.error('loadTopNodes error:', e);
+        el.innerHTML = '<div class="empty-msg">' + t('load_fail') + '</div>';
+      }
+    }
+
+    async function searchNode() {
+      var q = document.getElementById('node-search-input')?.value.trim();
+      if (!q) return;
+      var resultsEl = document.getElementById('node-search-results');
+      var topEl = document.getElementById('top-nodes');
+      if (!resultsEl) return;
+      // If it's a full pubkey, load detail directly
+      if (/^[0-9a-f]{66}$/.test(q)) { await loadNodeDetail(q); return; }
+      if (topEl) topEl.innerHTML = '<div class="empty-msg">' + t('searching') + '</div>';
+      try {
+        var res = await fetchRetry(API + '/v1/lightning/search?searchText=' + encodeURIComponent(q) + '&resultAmount=10', 10000).then(function(r) { return r.json(); });
+        var nodes = res.nodes || [];
+        if (!nodes.length) {
+          if (topEl) topEl.innerHTML = '<div class="empty-msg">' + t('no_results') + '</div>';
+          return;
+        }
+        if (nodes.length === 1) { await loadNodeDetail(nodes[0].publicKey); return; }
+        renderTopNodes(nodes);
+      } catch (e) {
+        console.error('searchNode error:', e);
+        if (topEl) topEl.innerHTML = '<div class="empty-msg">' + t('search_error') + '</div>';
+      }
+    }
+
+    async function loadNodeDetail(pubkey) {
+      var el = document.getElementById('node-detail');
+      if (!el) return;
+      el.classList.remove('hidden');
+      el.innerHTML = '<div class="empty-msg">' + t('loading') + '</div>';
+      try {
+        var n = await fetchRetry(API + '/v1/lightning/nodes/' + pubkey, 10000).then(function(r) { return r.json(); });
+        el.innerHTML =
+          '<div class="nd-title">' + (escHtml(n.alias) || pubkey.slice(0, 20) + '…') + '</div>' +
+          '<div class="nd-row"><span class="nd-label">Public Key</span><span class="nd-val nd-pubkey">' + escHtml(pubkey) + '</span></div>' +
+          '<div class="nd-row"><span class="nd-label">' + t('total_capacity') + '</span><span class="nd-val">' + ((n.capacity || 0) / 1e8).toFixed(4) + ' BTC</span></div>' +
+          '<div class="nd-row"><span class="nd-label">' + t('channels') + '</span><span class="nd-val">' + (n.active_channel_count || n.channels || 0).toLocaleString() + ' ' + t('active') + '</span></div>' +
+          '<div class="nd-row"><span class="nd-label">' + t('country') + '</span><span class="nd-val">' + escHtml(n.country?.en || n.city?.en || n.country?.de || t('unknown')) + '</span></div>' +
+          '<div class="nd-row"><span class="nd-label">' + t('first_seen') + '</span><span class="nd-val">' + ((n.first_seen || n.firstSeen) ? new Date((n.first_seen || n.firstSeen) * 1000).toLocaleDateString(lang === 'ja' ? 'ja-JP' : lang === 'en' ? 'en-US' : 'ko-KR') : '—') + '</span></div>' +
+          '<div class="nd-row"><span class="nd-label">' + t('last_update') + '</span><span class="nd-val">' + ((n.updated_at || n.updatedAt) ? new Date((n.updated_at || n.updatedAt) * 1000).toLocaleDateString(lang === 'ja' ? 'ja-JP' : lang === 'en' ? 'en-US' : 'ko-KR') : '—') + '</span></div>';
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } catch (e) {
+        el.innerHTML = '<div class="empty-msg">' + t('node_load_fail') + '</div>';
+      }
+    }
+
+    async function loadNetworkHistory() {
+      var el = document.getElementById('network-chart');
+      if (!el) return;
+      try {
+        var d = await fetchRetry(API + '/v1/lightning/statistics/2y', 15000).then(function(r) { return r.json(); });
+        if (!Array.isArray(d) || !d.length) return;
+        var cur = d[0], old = d[d.length - 1];
+        var getNodes = function(x) { return (x.clearnet_nodes || 0) + (x.tor_nodes || 0) + (x.unannounced_nodes || 0) + (x.clearnet_tor_nodes || 0); };
+        var chDiff = cur.channel_count - old.channel_count;
+        var ndDiff = getNodes(cur) - getNodes(old);
+        var capDiff = (cur.total_capacity - old.total_capacity) / 1e8;
+        var sign = function(v) { return v > 0 ? '+' : ''; };
+        el.innerHTML =
+          '<div class="network-stat-row"><span class="network-stat-label">' + t('total_node_count') + '</span><span class="network-stat-val">' + getNodes(cur).toLocaleString() + ' <small class="' + (ndDiff >= 0 ? 'diff-positive' : 'diff-negative') + '">' + sign(ndDiff) + ndDiff.toLocaleString() + '</small></span></div>' +
+          '<div class="network-stat-row"><span class="network-stat-label">Clearnet</span><span class="network-stat-val">' + (cur.clearnet_nodes || 0).toLocaleString() + '</span></div>' +
+          '<div class="network-stat-row"><span class="network-stat-label">Tor</span><span class="network-stat-val">' + (cur.tor_nodes || 0).toLocaleString() + '</span></div>' +
+          '<div class="network-stat-row"><span class="network-stat-label">' + t('channel_count') + '</span><span class="network-stat-val">' + cur.channel_count.toLocaleString() + ' <small class="' + (chDiff >= 0 ? 'diff-positive' : 'diff-negative') + '">' + sign(chDiff) + chDiff.toLocaleString() + '</small></span></div>' +
+          '<div class="network-stat-row"><span class="network-stat-label">' + t('total_capacity_label') + '</span><span class="network-stat-val">' + ((cur.total_capacity || 0) / 1e8).toFixed(0) + ' BTC <small class="' + (capDiff >= 0 ? 'diff-positive' : 'diff-negative') + '">' + sign(capDiff) + capDiff.toFixed(0) + '</small></span></div>' +
+          '<div class="network-stat-row"><span class="network-stat-label">' + t('reference') + '</span><span class="network-stat-val" style="font-size:.65rem;color:var(--text3)">' + t('change_2y') + '</span></div>';
+      } catch (e) {
+        console.error('loadNetworkHistory error:', e);
+      }
+    }
+
     // Init: load globe + world data + API data
     async function init() {
       try {
@@ -975,6 +1124,26 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
     document.getElementById('theme-btn')?.addEventListener('click', toggleTheme);
     document.getElementById('tab-ln')?.addEventListener('click', function() { switchTab('ln'); });
     document.getElementById('tab-mining')?.addEventListener('click', function() { switchTab('mining'); });
+
+    // Node search events
+    document.getElementById('node-search-btn')?.addEventListener('click', searchNode);
+    document.getElementById('node-search-input')?.addEventListener('keydown', function(e) { if (e.key === 'Enter') searchNode(); });
+    // Top nodes click → show detail
+    document.getElementById('top-nodes')?.addEventListener('click', function(e) {
+      var row = e.target.closest('[data-pubkey]');
+      if (row) loadNodeDetail(row.dataset.pubkey);
+    });
+    document.getElementById('top-nodes')?.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        var row = e.target.closest('[data-pubkey]');
+        if (row) loadNodeDetail(row.dataset.pubkey);
+      }
+    });
+    // Node search results click → show detail
+    document.getElementById('node-search-results')?.addEventListener('click', function(e) {
+      var row = e.target.closest('[data-pubkey]');
+      if (row) loadNodeDetail(row.dataset.pubkey);
+    });
 
     // Responsive resize
     window.addEventListener('resize', function() {

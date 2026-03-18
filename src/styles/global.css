@@ -230,3 +230,31 @@ footer { border-top: 1px solid var(--border); padding: 16px 20px; margin-top: 40
 /* Focus indicator (WCAG 2.1 AA) */
 :focus-visible { outline: 2px solid var(--accent, #f7931a); outline-offset: 2px; border-radius: 2px; }
 :focus:not(:focus-visible) { outline: none; }
+
+/* ── Node Explorer Sections (merged from nodes.txid.uk) ── */
+.sidebar-section { margin-top: 16px; }
+.section-title { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text2); margin-bottom: 8px; }
+.node-search-row { display: flex; gap: 6px; margin-bottom: 8px; }
+.node-search-row input { flex: 1; background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; color: var(--text1); font-size: .75rem; font-family: var(--font); }
+.node-search-row button { background: var(--accent); border: none; border-radius: 6px; padding: 6px 12px; color: #000; font-size: .72rem; font-weight: 700; cursor: pointer; }
+.node-list { display: flex; flex-direction: column; gap: 4px; max-height: 300px; overflow-y: auto; }
+.node-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; font-size: .72rem; cursor: pointer; transition: border-color .2s; }
+.node-item:hover { border-color: var(--accent); }
+.node-alias { font-weight: 600; color: var(--text1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 150px; }
+.node-capacity { font-family: var(--font); color: var(--accent); font-size: .68rem; }
+.node-detail { background: var(--bg2); border: 1px solid var(--accent); border-radius: 8px; padding: 12px; margin-top: 8px; }
+.node-detail.hidden { display: none; }
+.nd-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: .7rem; border-bottom: 1px solid rgba(48,54,61,0.2); }
+.nd-row:last-child { border-bottom: none; }
+.nd-label { color: var(--text3); }
+.nd-val { font-family: var(--font); color: var(--text1); }
+.nd-title { font-size: .85rem; font-weight: 700; color: var(--accent); margin-bottom: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nd-pubkey { font-size: .6rem; word-break: break-all; white-space: normal; }
+.network-stat-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: .72rem; border-bottom: 1px solid rgba(48,54,61,0.15); }
+.network-stat-row:last-child { border-bottom: none; }
+.network-stat-label { color: var(--text3); }
+.network-stat-val { font-family: var(--font); color: var(--text1); }
+.network-stat-val small { font-size: .65rem; margin-left: 4px; }
+.diff-positive { color: var(--green); }
+.diff-negative { color: #f85149; }
+.node-list .empty-msg { font-size: .72rem; color: var(--text3); padding: 8px 0; }
