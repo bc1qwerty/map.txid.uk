@@ -55,7 +55,36 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
 
   <main id="main" class="map-dashboard">
     <h1 class="sr-only">{titles[lang!] || titles.en}</h1>
-    <!-- LEFT: 3D Globe -->
+
+    <!-- LEFT: Node Explorer -->
+    <nav class="map-left-col">
+      <!-- Network History -->
+      <div class="sidebar-section ln-only" id="network-history-section">
+        <h3 class="section-title" data-ko="네트워크 추이" data-en="Network History" data-ja="ネットワーク推移">Network History</h3>
+        <div id="network-chart"></div>
+      </div>
+
+      <!-- Node Search -->
+      <div class="sidebar-section ln-only" id="node-search-section">
+        <h3 class="section-title" data-ko="노드 검색" data-en="Node Search" data-ja="ノード検索">Node Search</h3>
+        <div class="node-search-row">
+          <input type="text" id="node-search-input" class="search-input" data-ko="노드 별칭 또는 pubkey..." data-en="Node alias or pubkey..." data-ja="ノードエイリアスまたはpubkey..." placeholder="Node alias or pubkey..." />
+          <button id="node-search-btn" class="search-btn" data-ko="검색" data-en="Search" data-ja="검색">Search</button>
+        </div>
+        <div id="node-search-results"></div>
+      </div>
+
+      <!-- Top Nodes -->
+      <div class="sidebar-section ln-only" id="top-nodes-section">
+        <h3 class="section-title" data-ko="상위 노드" data-en="Top Nodes" data-ja="トップノード">Top Nodes</h3>
+        <div id="top-nodes" class="node-list"></div>
+      </div>
+
+      <!-- Node Detail -->
+      <div id="node-detail" class="node-detail hidden"></div>
+    </nav>
+
+    <!-- CENTER: 3D Globe -->
     <div class="map-globe-col">
       <div class="map-wrap">
         <div class="map-tab-overlay">
@@ -66,37 +95,12 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
         <div id="map-tooltip" class="map-tooltip hidden"></div>
       </div>
     </div>
-    <!-- RIGHT: Data Panel -->
-    <aside class="map-data-col">
-      <!-- Network History (top) -->
-      <div class="sidebar-section ln-only" id="network-history-section">
-        <h3 class="section-title" data-ko="네트워크 추이" data-en="Network History" data-ja="ネットワーク推移">Network History</h3>
-        <div id="network-chart"></div>
-      </div>
 
+    <!-- RIGHT: Country List -->
+    <aside class="map-data-col">
       <!-- Mining stats (Mining tab only) -->
       <div id="global-stats" class="global-stats" aria-live="polite"></div>
-
       <div id="country-list" class="country-list" aria-live="polite"></div>
-
-      <!-- Node Search (Lightning tab only) -->
-      <div class="sidebar-section ln-only" id="node-search-section">
-        <h3 class="section-title" data-ko="노드 검색" data-en="Node Search" data-ja="ノード検索">Node Search</h3>
-        <div class="node-search-row">
-          <input type="text" id="node-search-input" class="search-input" data-ko="노드 별칭 또는 pubkey..." data-en="Node alias or pubkey..." data-ja="ノードエイリアスまたはpubkey..." placeholder="Node alias or pubkey..." />
-          <button id="node-search-btn" class="search-btn" data-ko="검색" data-en="Search" data-ja="検색">Search</button>
-        </div>
-        <div id="node-search-results"></div>
-      </div>
-
-      <!-- Top Nodes (Lightning tab only) -->
-      <div class="sidebar-section ln-only" id="top-nodes-section">
-        <h3 class="section-title" data-ko="상위 노드" data-en="Top Nodes" data-ja="トップノード">Top Nodes</h3>
-        <div id="top-nodes" class="node-list"></div>
-      </div>
-
-      <!-- Node Detail (shown on click/search) -->
-      <div id="node-detail" class="node-detail hidden"></div>
     </aside>
   </main>
 
