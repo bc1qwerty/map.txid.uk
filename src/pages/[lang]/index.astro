@@ -990,13 +990,17 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
     function renderCountryList(sorted, total, _unit) {
       const cl = document.getElementById('country-list');
       var unitLabel = _unit === 'nodes' ? t('node_label') : t('block_label');
-      cl.innerHTML = '<div class="cl-header"><span>' + escHtml(t('country')) + '</span><span>' + escHtml(unitLabel) + '</span></div>' +
-        sorted.map(function(entry) {
+      var titleLabel = _unit === 'nodes' ? (lang === 'ko' ? '국가별 노드' : lang === 'ja' ? '国別ノード' : 'Nodes by Country') : (lang === 'ko' ? '국가별 블록' : lang === 'ja' ? '国別ブロック' : 'Blocks by Country');
+      cl.innerHTML =
+        '<h3 class="section-title">' + escHtml(titleLabel) + '</h3>' +
+        '<div class="cl-header"><span>#</span><span>' + escHtml(t('country')) + '</span><span>' + escHtml(unitLabel) + '</span><span>%</span></div>' +
+        sorted.map(function(entry, i) {
         const cc = entry[0];
         const v = entry[1];
         const val = v.count || 0;
         const pct = ((val / total) * 100).toFixed(1);
         return '<div class="cl-row">' +
+          '<span class="cl-rank">' + (i + 1) + '</span>' +
           '<span class="cl-flag">' + escHtml(FLAGS[cc] || '') + '</span>' +
           '<span class="cl-name">' + escHtml(getName(cc)) + '</span>' +
           '<span class="cl-count">' + val.toLocaleString() + '</span>' +
