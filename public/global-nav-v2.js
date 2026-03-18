@@ -1,6 +1,6 @@
 /**
  * global-nav.js — txid.uk 전체 사이트 공통 네비게이션
- * 사용법: <script src="/global-nav-v2.js" defer></script>
+ * 사용법: <script src="https://apps.txid.uk/global-nav.js" defer></script>
  */
 (function () {
   'use strict';
@@ -45,6 +45,7 @@
       link.id = 'txid-global-nav-css';
       link.rel = 'stylesheet';
       link.href = '/global-nav-v2.css';
+      link.crossOrigin = 'anonymous';
       document.head.appendChild(link);
     }
     document.body.insertAdjacentHTML('afterbegin', html);
