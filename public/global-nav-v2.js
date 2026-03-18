@@ -15,7 +15,6 @@
     { label: 'id',        url: 'https://id.txid.uk',       host: 'id.txid.uk' },
     { label: 'learn',     url: 'https://learn.txid.uk',    host: 'learn.txid.uk' },
     { label: 'sim',       url: 'https://sim.txid.uk',      host: 'sim.txid.uk' },
-    { label: 'glossary',  url: 'https://glossary.txid.uk', host: 'glossary.txid.uk' },
     { label: 'macro',     url: 'https://macro.txid.uk',    host: 'macro.txid.uk' },
     { label: 'apps',      url: 'https://apps.txid.uk',     host: 'apps.txid.uk' },
   ];
