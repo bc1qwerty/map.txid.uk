@@ -162,15 +162,15 @@ header { background: var(--bg2); border-bottom: 1px solid var(--border); positio
 
 /* Country list — fills remaining space in right column */
 .country-list { display: flex; flex-direction: column; gap: 6px; }
-.cl-row { display: grid; grid-template-columns: 28px 100px 1fr 60px 50px; align-items: center; gap: 10px; font-size: .75rem; padding: 6px 10px; border-radius: 6px; background: var(--bg2); border: 1px solid var(--border); cursor: pointer; transition: border-color .2s, transform .2s, box-shadow .2s; }
+.cl-row { display: grid; grid-template-columns: 24px minmax(0,1fr) auto auto; align-items: center; gap: 6px; font-size: .72rem; padding: 5px 8px; border-radius: 6px; background: var(--bg2); border: 1px solid var(--border); cursor: pointer; transition: border-color .2s, transform .2s, box-shadow .2s; }
 .cl-row:hover { border-color: var(--accent); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.1); }
 .cl-row.highlighted { background: rgba(247,147,26,.12); border-radius: 6px; }
-.cl-flag { font-size: 1rem; }
-.cl-name { color: var(--text2); font-family: var(--font-ko); font-size: .72rem; }
-.cl-bar-wrap { background: var(--bg3); border-radius: 3px; height: 5px; }
-.cl-bar { background: var(--accent); height: 100%; border-radius: 3px; transition: width .5s ease; width: var(--w); }
-.cl-count { font-family: var(--font); color: var(--text1); text-align: right; font-size: .72rem; }
-.cl-pct { font-family: var(--font); color: var(--text3); text-align: right; font-size: .68rem; }
+.cl-header { display: grid; grid-template-columns: 24px minmax(0,1fr) auto auto; gap: 6px; padding: 0 8px 4px; font-size: .62rem; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+.cl-header span:nth-child(1) { grid-column: 1 / 3; }
+.cl-flag { font-size: .9rem; }
+.cl-name { color: var(--text1); font-family: var(--font-ko); font-size: .72rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cl-count { font-family: var(--font); color: var(--accent); text-align: right; font-size: .72rem; font-weight: 600; }
+.cl-pct { font-family: var(--font); color: var(--text3); text-align: right; font-size: .65rem; min-width: 36px; }
 
 /* Map detail */
 #map-detail { font-family: var(--font-ko); font-size: .82rem; color: var(--text1); line-height: 1.8; min-height: 2.5rem; }
@@ -226,8 +226,9 @@ footer { border-top: 1px solid var(--border); padding: 16px 20px; margin-top: 40
 }
 @media (max-width: 680px) {
   .stats-panel { grid-template-columns: 1fr; }
-  .cl-row { grid-template-columns: 24px 80px 1fr 48px; }
+  .cl-row { grid-template-columns: 24px minmax(0,1fr) auto; }
   .cl-pct { display: none; }
+  .cl-header { grid-template-columns: 24px minmax(0,1fr) auto; }
 }
 
 /* Hamburger menu (mobile) */

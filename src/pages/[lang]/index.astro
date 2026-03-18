@@ -989,17 +989,16 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
 
     function renderCountryList(sorted, total, _unit) {
       const cl = document.getElementById('country-list');
-      const top = sorted.slice(0, 30);
-      cl.innerHTML = top.map(function(entry) {
+      var unitLabel = _unit === 'nodes' ? t('node_label') : t('block_label');
+      cl.innerHTML = '<div class="cl-header"><span>' + escHtml(t('country')) + '</span><span>' + escHtml(unitLabel) + '</span></div>' +
+        sorted.map(function(entry) {
         const cc = entry[0];
         const v = entry[1];
         const val = v.count || 0;
         const pct = ((val / total) * 100).toFixed(1);
-        const w = ((val / (top[0][1].count || 1)) * 100).toFixed(0);
         return '<div class="cl-row">' +
           '<span class="cl-flag">' + escHtml(FLAGS[cc] || '') + '</span>' +
           '<span class="cl-name">' + escHtml(getName(cc)) + '</span>' +
-          '<div class="cl-bar-wrap"><div class="cl-bar" style="--w:' + w + '%"></div></div>' +
           '<span class="cl-count">' + val.toLocaleString() + '</span>' +
           '<span class="cl-pct">' + pct + '%</span>' +
         '</div>';
