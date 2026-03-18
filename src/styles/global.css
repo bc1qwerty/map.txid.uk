@@ -4,7 +4,7 @@
   --bg: #0d1117; --bg2: #161b22; --bg3: #21262d;
   --border: #30363d; --text1: #e6edf3; --text2: #8b949e; --text3: #6e7681;
   --accent: #f7931a; --accent-text: #f7931a; --green: #3fb950; --blue: #58a6ff;
-  --max-w: 1200px; --radius: 8px;
+  --max-w: 100%; --radius: 8px;
   --border2: #444c56;
 }
 
@@ -64,9 +64,47 @@ header { background: var(--bg2); border-bottom: 1px solid var(--border); positio
 .tab-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text2); font-family: var(--font-ko); font-size: .78rem; padding: 5px 14px; border-radius: 6px; cursor: pointer; transition: all .2s; }
 .tab-btn.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
 
+/* Dashboard layout — full width, globe left + data right */
+.map-dashboard {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 0;
+  width: 100%;
+  min-height: calc(100vh - 100px);
+  padding: 0;
+  max-width: 100%;
+  margin: 0;
+}
+.map-globe-col {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+}
+.map-data-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-left: 1px solid var(--border);
+  background: var(--bg);
+  overflow-y: auto;
+  max-height: calc(100vh - 100px);
+}
+@media (max-width: 1024px) {
+  .map-dashboard {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .map-data-col {
+    border-left: none;
+    border-top: 1px solid var(--border);
+    max-height: none;
+  }
+}
+
 /* Map / Globe */
-.map-wrap { position: relative; width: 100%; max-width: var(--max-w); margin: 0 auto; background: var(--bg2); border-bottom: 1px solid var(--border); overflow: hidden; }
-#globe-canvas { width: 100%; height: 60vh; min-height: 400px; display: block; cursor: grab; border-radius: var(--radius); }
+.map-wrap { position: relative; width: 100%; height: 100%; background: var(--bg2); overflow: hidden; }
+#globe-canvas { width: 100%; height: 100%; min-height: 500px; display: block; cursor: grab; }
 #globe-canvas:active { cursor: grabbing; }
 .map-tooltip { position: absolute; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: .75rem; color: var(--text1); pointer-events: none; line-height: 1.7; z-index: 10; min-width: 160px; left: var(--x); top: var(--y); box-shadow: 0 4px 16px rgba(0,0,0,.3); }
 
@@ -100,15 +138,14 @@ header { background: var(--bg2); border-bottom: 1px solid var(--border); positio
 [data-theme="light"] .map-tab-overlay .tab-btn { background: rgba(246,248,250,.85); }
 [data-theme="light"] .map-tab-overlay .tab-btn.active { background: rgba(188,78,0,.12); }
 
-/* Stats panel */
-.stats-panel { max-width: var(--max-w); margin: 0 auto; padding: 24px 20px; display: grid; grid-template-columns: auto 1fr; gap: 24px; }
-.global-stats { display: flex; flex-direction: column; gap: 10px; min-width: 200px; }
+/* Stats panel — now inside right column */
+.global-stats { display: flex; flex-direction: column; gap: 8px; }
 .gs-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; }
 .gs-val { font-family: var(--font); font-size: 1.4rem; font-weight: 700; color: var(--accent-text); }
 .gs-lbl { font-size: .7rem; color: var(--text3); font-family: var(--font-ko); margin-top: 2px; }
 
-/* Country list */
-.country-list { display: flex; flex-direction: column; gap: 6px; max-height: 360px; overflow-y: auto; }
+/* Country list — fills remaining space in right column */
+.country-list { display: flex; flex-direction: column; gap: 6px; flex: 1; overflow-y: auto; }
 .cl-row { display: grid; grid-template-columns: 28px 100px 1fr 60px 50px; align-items: center; gap: 10px; font-size: .75rem; padding: 6px 10px; border-radius: 6px; background: var(--bg2); border: 1px solid var(--border); cursor: pointer; transition: border-color .2s, transform .2s, box-shadow .2s; }
 .cl-row:hover { border-color: var(--accent); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.1); }
 .cl-row.highlighted { background: rgba(247,147,26,.12); border-radius: 6px; }
