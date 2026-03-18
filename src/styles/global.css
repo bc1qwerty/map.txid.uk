@@ -82,8 +82,6 @@ header { background: var(--bg2); border-bottom: 1px solid var(--border); positio
   padding: 16px;
   border-right: 1px solid var(--border);
   background: var(--bg);
-  overflow-y: auto;
-  max-height: calc(100vh - 100px);
 }
 .map-globe-col {
   position: relative;
@@ -97,8 +95,6 @@ header { background: var(--bg2); border-bottom: 1px solid var(--border); positio
   padding: 16px;
   border-left: 1px solid var(--border);
   background: var(--bg);
-  overflow-y: auto;
-  max-height: calc(100vh - 100px);
 }
 /* Tablet: 2-column (hide left) */
 @media (max-width: 1280px) {
@@ -165,7 +161,7 @@ header { background: var(--bg2); border-bottom: 1px solid var(--border); positio
 .gs-lbl { font-size: .7rem; color: var(--text3); font-family: var(--font-ko); margin-top: 2px; }
 
 /* Country list — fills remaining space in right column */
-.country-list { display: flex; flex-direction: column; gap: 6px; flex: 1; overflow-y: auto; }
+.country-list { display: flex; flex-direction: column; gap: 6px; }
 .cl-row { display: grid; grid-template-columns: 28px 100px 1fr 60px 50px; align-items: center; gap: 10px; font-size: .75rem; padding: 6px 10px; border-radius: 6px; background: var(--bg2); border: 1px solid var(--border); cursor: pointer; transition: border-color .2s, transform .2s, box-shadow .2s; }
 .cl-row:hover { border-color: var(--accent); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.1); }
 .cl-row.highlighted { background: rgba(247,147,26,.12); border-radius: 6px; }
@@ -257,7 +253,7 @@ footer { border-top: 1px solid var(--border); padding: 16px 20px; margin-top: 40
 .node-search-row { display: flex; gap: 6px; margin-bottom: 8px; }
 .node-search-row input { flex: 1; background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; color: var(--text1); font-size: .75rem; font-family: var(--font); }
 .node-search-row button { background: var(--accent); border: none; border-radius: 6px; padding: 6px 12px; color: #000; font-size: .72rem; font-weight: 700; cursor: pointer; }
-.node-list { display: flex; flex-direction: column; gap: 4px; max-height: 300px; overflow-y: auto; }
+.node-list { display: flex; flex-direction: column; gap: 4px; }
 .node-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; font-size: .72rem; cursor: pointer; transition: border-color .2s; }
 .node-item:hover { border-color: var(--accent); }
 .node-alias { font-weight: 600; color: var(--text1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 150px; }
