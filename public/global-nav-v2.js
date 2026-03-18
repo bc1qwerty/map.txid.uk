@@ -8,7 +8,6 @@
   var SITES = [
     { label: 'txid',      url: 'https://txid.uk',          host: 'txid.uk' },
     { label: 'tools',     url: 'https://tools.txid.uk',    host: 'tools.txid.uk' },
-    { label: 'viz',       url: 'https://viz.txid.uk',      host: 'viz.txid.uk' },
     { label: 'stats',     url: 'https://stats.txid.uk',    host: 'stats.txid.uk' },
     { label: 'nodes',     url: 'https://nodes.txid.uk',    host: 'nodes.txid.uk' },
     { label: 'map',       url: 'https://map.txid.uk',      host: 'map.txid.uk' },

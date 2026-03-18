@@ -18,11 +18,6 @@ export const sites: SiteItem[] = [
     name: { ko: '도구', en: 'Tools', ja: 'ツール' },
   },
   {
-    label: 'viz', url: 'https://viz.txid.uk', host: 'viz.txid.uk',
-    icon: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
-    name: { ko: '시각화', en: 'Viz', ja: '可視化' },
-  },
-  {
     label: 'stats', url: 'https://stats.txid.uk', host: 'stats.txid.uk',
     icon: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
     name: { ko: '통계', en: 'Stats', ja: '統計' },
