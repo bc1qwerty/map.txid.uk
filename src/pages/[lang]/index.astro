@@ -60,7 +60,7 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
         <button class="tab-btn active" id="tab-ln"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> <span>{tx('tabLightning')}</span></button>
         <button class="tab-btn" id="tab-mining"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M15 4l5 5-11 11H4v-5L15 4z"/><line x1="9" y1="9" x2="15" y2="15"/></svg> <span>{tx('tabMining')}</span></button>
       </div>
-      <svg id="world-map" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet" role="img" aria-label={mapAriaLabel}></svg>
+      <canvas id="globe-canvas" role="img" aria-label={mapAriaLabel}></canvas>
       <div id="map-tooltip" class="map-tooltip hidden"></div>
     </div>
 
@@ -76,12 +76,12 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
     window.__pageLang = pageLang;
   </script>
 
-  <script>
-    function escHtml(s: string | number | null | undefined): string {
+  <script type="module" is:inline>
+    function escHtml(s) {
       return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    async function fetchRetry(url: string, timeout?: number, retries?: number): Promise<Response> {
+    async function fetchRetry(url, timeout, retries) {
       for (let i = 0, m = retries || 2; i <= m; i++) {
         try {
           return await fetch(url, { signal: AbortSignal.timeout(timeout || 10000) });
@@ -93,20 +93,16 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
       throw new Error('fetchRetry exhausted');
     }
 
-    // Declare global d3 and topojson loaded via CDN
-    declare const d3: any;
-    declare const topojson: any;
-
     // ── i18n ──
-    const pageLang = (window as any).__pageLang || 'ko';
+    const pageLang = window.__pageLang || 'ko';
     let lang = localStorage.getItem('lang') || pageLang;
-    const LABELS: Record<string, Record<string, string>> = {
+    const LABELS = {
       ko: {탐색기:'탐색기', 도구:'도구', 시각화:'시각화', 통계:'통계', 노드:'노드', 지도:'지도', 포트폴리오:'포트폴리오', 전송:'전송', 배우기:'배우기', 앱모음:'앱모음'},
       en: {탐색기:'Explorer', 도구:'Tools', 시각화:'Viz', 통계:'Stats', 노드:'Nodes', 지도:'Map', 포트폴리오:'Portfolio', 전송:'TX', 배우기:'Learn', 앱모음:'Apps'},
       ja: {탐색기:'探索', 도구:'ツール', 시각화:'可視化', 통계:'統計', 노드:'ノード', 지도:'地図', 포트폴리오:'資産', 전송:'送金', 배우기:'学習', 앱모음:'アプリ'},
     };
 
-    const i18n: Record<string, Record<string, string>> = {
+    const i18n = {
       ko: {
         loading: '로딩 중…',
         total_nodes: '총 노드 수', channels: '채널 수', capacity: '총 용량',
@@ -130,9 +126,9 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
       },
     };
 
-    function t(k: string): string { return (i18n[lang] && i18n[lang][k]) || i18n.ko[k] || k; }
+    function t(k) { return (i18n[lang] && i18n[lang][k]) || i18n.ko[k] || k; }
 
-    function setLang(l: string) {
+    function setLang(l) {
       lang = l; localStorage.setItem('lang', lang);
       const target = '/' + lang + '/';
       if (window.location.pathname !== target) {
@@ -141,16 +137,16 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
       }
       document.documentElement.lang = lang;
       const btn = document.getElementById('lang-btn');
-      if (btn) btn.textContent = ({ ko: 'KO', en: 'EN', ja: 'JA' } as Record<string, string>)[lang] || 'KO';
+      if (btn) btn.textContent = ({ ko: 'KO', en: 'EN', ja: 'JA' })[lang] || 'KO';
       document.getElementById('lang-menu')?.classList.remove('open');
-      document.querySelectorAll<HTMLElement>('[data-ko]').forEach(el => {
+      document.querySelectorAll('[data-ko]').forEach(function(el) {
         const val = el.dataset[lang] || el.dataset.en || el.dataset.ko;
         if (val) {
-          if ('placeholder' in el && (el as HTMLInputElement).placeholder !== undefined) (el as HTMLInputElement).placeholder = val;
+          if ('placeholder' in el && el.placeholder !== undefined) el.placeholder = val;
           else el.textContent = val;
         }
       });
-      if ((window as any)._mapData) loadData();
+      if (window._mapData) loadData();
     }
 
     function toggleLang() {
@@ -159,9 +155,9 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
       document.getElementById('lang-btn')?.setAttribute('aria-expanded', String(m?.classList.contains('open') || false));
     }
 
-    document.addEventListener('click', e => {
+    document.addEventListener('click', function(e) {
       const m = document.getElementById('lang-menu');
-      if (m && !(e.target as HTMLElement).closest('.lang-dropdown')) {
+      if (m && !e.target.closest('.lang-dropdown')) {
         m.classList.remove('open');
         document.getElementById('lang-btn')?.setAttribute('aria-expanded', 'false');
       }
@@ -208,17 +204,17 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
       h.setAttribute('data-theme', next);
       localStorage.setItem('theme', next);
       updateThemeBtn();
-      renderMap((window as any)._mapData);
+      if (globeState) updateGlobeTheme();
     }
 
-    function switchTab(tab: string) {
+    function switchTab(tab) {
       currentTab = tab;
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
       document.getElementById('tab-' + tab)?.classList.add('active');
       loadData();
     }
 
-    const FLAGS: Record<string, string> = {
+    const FLAGS = {
       US:'🇺🇸',DE:'🇩🇪',GB:'🇬🇧',FR:'🇫🇷',NL:'🇳🇱',CA:'🇨🇦',SG:'🇸🇬',JP:'🇯🇵',AU:'🇦🇺',CH:'🇨🇭',
       FI:'🇫🇮',SE:'🇸🇪',NO:'🇳🇴',BR:'🇧🇷',KR:'🇰🇷',IN:'🇮🇳',RU:'🇷🇺',IT:'🇮🇹',ES:'🇪🇸',PL:'🇵🇱',
       AT:'🇦🇹',CZ:'🇨🇿',UA:'🇺🇦',TR:'🇹🇷',AR:'🇦🇷',MX:'🇲🇽',ZA:'🇿🇦',TH:'🇹🇭',ID:'🇮🇩',TW:'🇹🇼',
@@ -236,7 +232,7 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
       VA:'🇻🇦',SM:'🇸🇲',MC:'🇲🇨',FO:'🇫🇴',
     };
 
-    const NAMES: Record<string, string> = {
+    const NAMES = {
       US:'미국',DE:'독일',GB:'영국',FR:'프랑스',NL:'네덜란드',CA:'캐나다',SG:'싱가포르',JP:'일본',
       AU:'호주',CH:'스위스',FI:'핀란드',SE:'스웨덴',NO:'노르웨이',BR:'브라질',KR:'한국',IN:'인도',
       RU:'러시아',IT:'이탈리아',ES:'스페인',PL:'폴란드',AT:'오스트리아',CZ:'체코',UA:'우크라이나',
@@ -270,7 +266,7 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
       RE:'레위니옹',YT:'마요트',GF:'프랑스령기아나',
     };
 
-    const EN_NAMES: Record<string, string> = {
+    const EN_NAMES = {
       US:'United States',DE:'Germany',GB:'United Kingdom',FR:'France',NL:'Netherlands',
       CA:'Canada',SG:'Singapore',JP:'Japan',AU:'Australia',CH:'Switzerland',
       FI:'Finland',SE:'Sweden',NO:'Norway',BR:'Brazil',KR:'South Korea',IN:'India',
@@ -295,9 +291,9 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
       LK:'Sri Lanka',NP:'Nepal',MM:'Myanmar',
     };
 
-    function getName(cc: string): string { return lang === 'ko' ? (NAMES[cc] || cc) : (EN_NAMES[cc] || cc); }
+    function getName(cc) { return lang === 'ko' ? (NAMES[cc] || cc) : (EN_NAMES[cc] || cc); }
 
-    const CENTROIDS: Record<string, [number, number]> = {
+    const CENTROIDS = {
       US:[-98,38],DE:[10,51],GB:[-2,54],FR:[2,46],NL:[5.3,52],CA:[-96,60],SG:[103.8,1.3],
       JP:[138,36],AU:[133,-25],CH:[8,47],FI:[26,64],SE:[18,62],NO:[10,62],BR:[-55,-10],
       KR:[127,37],IN:[78,22],RU:[100,60],IT:[12,42],ES:[-4,40],PL:[20,52],AT:[14,47],
@@ -307,9 +303,9 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
       BG:[25,43],HR:[16,45],LT:[24,56],LV:[25,57],EE:[25,59],IL:[35,31],AE:[54,24],SA:[45,24],
     };
 
-    let worldGeo: any = null;
+    let worldGeoRaw = null;
 
-    const NAME_TO_ISO2: Record<string, string> = {
+    const NAME_TO_ISO2 = {
       'United States of America':'US','Germany':'DE','United Kingdom':'GB','France':'FR',
       'Netherlands':'NL','Canada':'CA','Singapore':'SG','Japan':'JP','Australia':'AU',
       'Switzerland':'CH','Finland':'FI','Sweden':'SE','Norway':'NO','Brazil':'BR',
@@ -323,54 +319,57 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
       'United Arab Emirates':'AE','Saudi Arabia':'SA','Iceland':'IS','Luxembourg':'LU',
     };
 
+    // ── Three.js Globe State ──
+    let globeState = null;
+
     async function loadData() {
-      const gs = document.getElementById('global-stats')!;
-      const cl = document.getElementById('country-list')!;
-      gs.innerHTML = `<div class="loading-msg">${t('loading')}</div>`;
+      const gs = document.getElementById('global-stats');
+      const cl = document.getElementById('country-list');
+      gs.innerHTML = '<div class="loading-msg">' + t('loading') + '</div>';
       cl.innerHTML = '';
 
       try {
         if (currentTab === 'ln') {
           const [countries, stats] = await Promise.all([
-            fetchRetry(`${API}/v1/lightning/nodes/countries`, 10000).then(r => r.json()),
-            fetchRetry(`${API}/v1/lightning/statistics/latest`, 10000).then(r => r.json()),
+            fetchRetry(API + '/v1/lightning/nodes/countries', 10000).then(function(r) { return r.json(); }),
+            fetchRetry(API + '/v1/lightning/statistics/latest', 10000).then(function(r) { return r.json(); }),
           ]);
-          const total = countries.reduce((s: number, n: any) => s + (n.count || 0), 0);
+          const total = countries.reduce(function(s, n) { return s + (n.count || 0); }, 0);
           const s = stats.latest || stats;
-          gs.innerHTML = `
-            <div class="gs-card"><div class="gs-val">${(s.node_count || 0).toLocaleString()}</div><div class="gs-lbl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> ${t('total_nodes')}</div></div>
-            <div class="gs-card"><div class="gs-val">${(s.channel_count || 0).toLocaleString()}</div><div class="gs-lbl">${t('channels')}</div></div>
-            <div class="gs-card"><div class="gs-val">${((s.total_capacity || 0) / 1e8).toFixed(0)} BTC</div><div class="gs-lbl">${t('capacity')}</div></div>`;
+          gs.innerHTML =
+            '<div class="gs-card"><div class="gs-val">' + (s.node_count || 0).toLocaleString() + '</div><div class="gs-lbl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> ' + t('total_nodes') + '</div></div>' +
+            '<div class="gs-card"><div class="gs-val">' + (s.channel_count || 0).toLocaleString() + '</div><div class="gs-lbl">' + t('channels') + '</div></div>' +
+            '<div class="gs-card"><div class="gs-val">' + ((s.total_capacity || 0) / 1e8).toFixed(0) + ' BTC</div><div class="gs-lbl">' + t('capacity') + '</div></div>';
 
-          const sorted: [string, { count: number; share: number }][] = countries.map((n: any) => [n.iso, { count: n.count, share: n.share }]).sort((a: any, b: any) => b[1].count - a[1].count);
-          (window as any)._mapData = { type: 'ln', data: sorted, total };
-          renderMap((window as any)._mapData);
+          const sorted = countries.map(function(n) { return [n.iso, { count: n.count, share: n.share }]; }).sort(function(a, b) { return b[1].count - a[1].count; });
+          window._mapData = { type: 'ln', data: sorted, total: total };
+          renderMap(window._mapData);
           renderCountryList(sorted, total, 'nodes');
         } else {
-          const pools = await fetchRetry(`${API}/v1/mining/pools/1w`, 10000).then(r => r.json());
-          gs.innerHTML = `
-            <div class="gs-card"><div class="gs-val">${pools.pools?.length || 0}</div><div class="gs-lbl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M15 4l5 5-11 11H4v-5L15 4z"/><line x1="9" y1="9" x2="15" y2="15"/></svg> ${t('active_pools')}</div></div>
-            <div class="gs-card"><div class="gs-val">${pools.blockCount || 0}</div><div class="gs-lbl">${t('blocks_7d')}</div></div>`;
+          const pools = await fetchRetry(API + '/v1/mining/pools/1w', 10000).then(function(r) { return r.json(); });
+          gs.innerHTML =
+            '<div class="gs-card"><div class="gs-val">' + (pools.pools?.length || 0) + '</div><div class="gs-lbl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M15 4l5 5-11 11H4v-5L15 4z"/><line x1="9" y1="9" x2="15" y2="15"/></svg> ' + t('active_pools') + '</div></div>' +
+            '<div class="gs-card"><div class="gs-val">' + (pools.blockCount || 0) + '</div><div class="gs-lbl">' + t('blocks_7d') + '</div></div>';
 
-          const poolCountry: Record<string, string> = {
+          const poolCountry = {
             'Foundry USA': 'US', 'AntPool': 'CN', 'F2Pool': 'CN', 'ViaBTC': 'CN', 'Binance Pool': 'CN',
             'MARA Pool': 'US', 'Luxor': 'US', 'Braiins Pool': 'CZ', 'SBI Crypto': 'JP',
             'Poolin': 'CN', 'BTC.com': 'CN', '1THash': 'CN', 'SpiderPool': 'CN',
             'Ocean': 'GB', 'EMCDPool': 'RU', 'Pega Pool': 'KW', 'KuCoinPool': 'SC',
           };
-          const byCc: Record<string, { count: number; blocks: number; pools: string[] }> = {};
-          (pools.pools || []).forEach((p: any) => {
+          const byCc = {};
+          (pools.pools || []).forEach(function(p) {
             const cc = poolCountry[p.name] || 'XX';
             if (!byCc[cc]) byCc[cc] = { count: 0, blocks: 0, pools: [] };
             byCc[cc].count++;
             byCc[cc].blocks += p.blockCount || 0;
             byCc[cc].pools.push(p.name);
           });
-          const totalBlocks = Object.values(byCc).reduce((s, v) => s + v.blocks, 0);
-          const sorted = Object.entries(byCc).filter(([cc]) => cc !== 'XX').sort((a, b) => b[1].blocks - a[1].blocks);
-          (window as any)._mapData = { type: 'mining', data: sorted, total: totalBlocks };
-          renderMap((window as any)._mapData);
-          renderCountryList(sorted.map(([cc, v]) => [cc, { count: v.blocks }] as [string, { count: number }]), totalBlocks, 'blocks');
+          const totalBlocks = Object.values(byCc).reduce(function(s, v) { return s + v.blocks; }, 0);
+          const sorted = Object.entries(byCc).filter(function(e) { return e[0] !== 'XX'; }).sort(function(a, b) { return b[1].blocks - a[1].blocks; });
+          window._mapData = { type: 'mining', data: sorted, total: totalBlocks };
+          renderMap(window._mapData);
+          renderCountryList(sorted.map(function(e) { return [e[0], { count: e[1].blocks }]; }), totalBlocks, 'blocks');
         }
       } catch (e) {
         console.error('loadData error:', e);
@@ -387,128 +386,578 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
       }
     }
 
-    function renderMap(mapData: any) {
-      if (!mapData || !worldGeo) return;
-      const container = document.getElementById('world-map')!;
-      const svg = d3.select('#world-map');
-      const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
-      const W = Math.min(container.clientWidth || 1000, 1000);
-      const H = W / 2;
-      const proj = d3.geoNaturalEarth1().scale(W * 0.153).translate([W / 2, H / 2]);
-      const path = d3.geoPath().projection(proj);
-      const tooltip = document.getElementById('map-tooltip')!;
+    // ── Three.js Globe ──
+    async function initGlobe() {
+      const THREE = await import('three');
+      const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
 
-      const valMap: Record<string, number> = {};
-      let maxVal = 0;
-      mapData.data.forEach(([cc, v]: [string, any]) => {
-        const val = v.count || 0;
-        valMap[cc] = val;
-        if (val > maxVal) maxVal = val;
+      const canvas = document.getElementById('globe-canvas');
+      if (!canvas) return;
+
+      const GLOBE_RADIUS = 1.0;
+      const isDark = function() { return document.documentElement.getAttribute('data-theme') !== 'light'; };
+
+      // Scene setup
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+      camera.position.set(0, 0.3, 3.0);
+
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+      renderer.setClearColor(isDark() ? 0x0d1117 : 0xf6f8fa);
+
+      // Controls
+      const controls = new OrbitControls(camera, canvas);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.rotateSpeed = 0.5;
+      controls.minDistance = 1.5;
+      controls.maxDistance = 6;
+      controls.enablePan = false;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.4;
+
+      // Auto-rotate idle logic
+      let idleTimer = null;
+      function onInteractionStart() {
+        controls.autoRotate = false;
+        if (idleTimer) clearTimeout(idleTimer);
+      }
+      function onInteractionEnd() {
+        if (idleTimer) clearTimeout(idleTimer);
+        idleTimer = setTimeout(function() { controls.autoRotate = true; }, 3000);
+      }
+      canvas.addEventListener('pointerdown', onInteractionStart);
+      canvas.addEventListener('pointerup', onInteractionEnd);
+      canvas.addEventListener('wheel', function() { onInteractionStart(); onInteractionEnd(); });
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+      scene.add(ambientLight);
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      dirLight.position.set(5, 3, 5);
+      scene.add(dirLight);
+
+      // Earth sphere (base)
+      const earthGeo = new THREE.SphereGeometry(GLOBE_RADIUS, 64, 64);
+      const earthMat = new THREE.MeshPhongMaterial({
+        color: isDark() ? 0x161b22 : 0xe8ecf0,
+        shininess: 5,
       });
+      const earthMesh = new THREE.Mesh(earthGeo, earthMat);
+      scene.add(earthMesh);
 
-      const colorScale = d3.scaleSequential()
-        .domain([0, maxVal])
-        .interpolator(isDark
-          ? d3.interpolate('#1c2030', '#f7931a')
-          : d3.interpolate('#eaeef2', '#bc4e00'));
+      // Atmosphere glow (Fresnel-like via shader)
+      const atmosGeo = new THREE.SphereGeometry(GLOBE_RADIUS * 1.015, 64, 64);
+      const atmosMat = new THREE.ShaderMaterial({
+        vertexShader: [
+          'varying vec3 vNormal;',
+          'void main() {',
+          '  vNormal = normalize(normalMatrix * normal);',
+          '  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
+          '}'
+        ].join('\n'),
+        fragmentShader: [
+          'varying vec3 vNormal;',
+          'void main() {',
+          '  float intensity = pow(0.65 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 3.0);',
+          '  gl_FragColor = vec4(0.3, 0.6, 1.0, 1.0) * intensity * 0.6;',
+          '}'
+        ].join('\n'),
+        blending: THREE.AdditiveBlending,
+        side: THREE.BackSide,
+        transparent: true,
+        depthWrite: false,
+      });
+      const atmosMesh = new THREE.Mesh(atmosGeo, atmosMat);
+      scene.add(atmosMesh);
 
-      svg.selectAll('*').remove();
-      svg.attr('viewBox', `0 0 ${W} ${H}`)
-        .attr('preserveAspectRatio', 'xMidYMid meet')
-        .style('width', '100%')
-        .style('height', 'auto');
+      // Country outlines group
+      const bordersGroup = new THREE.Group();
+      scene.add(bordersGroup);
 
-      svg.append('rect').attr('width', W).attr('height', H).attr('fill', isDark ? '#0d1117' : '#f6f8fa');
+      // Data points group
+      const dataPointsGroup = new THREE.Group();
+      scene.add(dataPointsGroup);
 
-      svg.append('g').selectAll('path').data(worldGeo.features).join('path')
-        .attr('class', 'country')
-        .attr('d', path)
-        .attr('fill', (d: any) => {
-          const cc = NAME_TO_ISO2[d.properties.name] || d.properties.iso_a2;
-          return valMap[cc] ? colorScale(valMap[cc]) : (isDark ? '#21262d' : '#eaeef2');
-        })
-        .attr('stroke', isDark ? '#30363d' : '#d0d7de')
-        .attr('stroke-width', 0.5)
-        .on('mouseover', (e: any, d: any) => {
-          const cc = NAME_TO_ISO2[d.properties.name] || d.properties.iso_a2;
-          const val = valMap[cc];
-          if (!val) return;
-          const pct = ((val / mapData.total) * 100).toFixed(1);
-          const label = currentTab === 'ln' ? t('node_label') : t('block_label');
-          tooltip.innerHTML = `<b>${escHtml(FLAGS[cc] || '')} ${escHtml(getName(cc))}</b><br>${val.toLocaleString()} ${escHtml(label)} (${pct}%)`;
-          tooltip.classList.remove('hidden');
-        })
-        .on('mousemove', (e: any) => {
-          const rect = document.getElementById('world-map')!.getBoundingClientRect();
-          tooltip.style.setProperty('--x', (e.clientX - rect.left + 12) + 'px');
-          tooltip.style.setProperty('--y', (e.clientY - rect.top - 10) + 'px');
-        })
-        .on('mouseout', () => tooltip.classList.add('hidden'))
-        .on('click', (e: any, d: any) => {
-          const cc = NAME_TO_ISO2[d.properties.name] || d.properties.iso_a2;
-          const val = valMap[cc];
-          if (!val) return;
-          svg.selectAll('.country').attr('stroke', isDark ? '#30363d' : '#d0d7de').attr('stroke-width', 0.5);
-          d3.select(e.target).attr('stroke', '#f7931a').attr('stroke-width', 2);
-          const rows = document.querySelectorAll('.cl-row');
-          rows.forEach((r: Element) => r.classList.remove('highlighted'));
-          const names = NAMES[cc] || cc;
-          rows.forEach((r: Element) => {
-            if (r.querySelector('.cl-name')?.textContent === names) {
-              r.classList.add('highlighted');
-              r.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      // Arcs group
+      const arcsGroup = new THREE.Group();
+      scene.add(arcsGroup);
+
+      // Lat/Lng to 3D
+      function latLngToVector3(lat, lng, radius) {
+        const phi = (90 - lat) * Math.PI / 180;
+        const theta = (lng + 180) * Math.PI / 180;
+        return new THREE.Vector3(
+          -radius * Math.sin(phi) * Math.cos(theta),
+          radius * Math.cos(phi),
+          radius * Math.sin(phi) * Math.sin(theta)
+        );
+      }
+
+      // Build country outlines from TopoJSON
+      function buildCountryOutlines(geoData) {
+        // Clear existing
+        while (bordersGroup.children.length > 0) {
+          const child = bordersGroup.children[0];
+          if (child.geometry) child.geometry.dispose();
+          if (child.material) child.material.dispose();
+          bordersGroup.remove(child);
+        }
+
+        const dark = isDark();
+        const borderColor = dark ? 0x30363d : 0xb8c0cc;
+
+        // Get mesh of all country boundaries
+        const mesh = topojson.mesh(geoData, geoData.objects.countries);
+
+        if (mesh && mesh.coordinates) {
+          mesh.coordinates.forEach(function(line) {
+            const points = [];
+            line.forEach(function(coord) {
+              points.push(latLngToVector3(coord[1], coord[0], GLOBE_RADIUS * 1.001));
+            });
+            if (points.length > 1) {
+              const geometry = new THREE.BufferGeometry().setFromPoints(points);
+              const material = new THREE.LineBasicMaterial({ color: borderColor, transparent: true, opacity: 0.35 });
+              const lineObj = new THREE.Line(geometry, material);
+              bordersGroup.add(lineObj);
             }
           });
-          const pct = ((val / mapData.total) * 100).toFixed(1);
-          const rank = mapData.data.findIndex(([c]: [string]) => c === cc) + 1;
-          const label = currentTab === 'ln' ? t('node_label') : t('block_label');
-          const detail = document.getElementById('map-detail');
-          if (detail) detail.innerHTML = `<span class="flag-lg">${FLAGS[cc] || ''}</span> <b>${getName(cc)}</b> &nbsp;<span class="rank-label">#${rank}위</span><br><span class="accent fw700">${val.toLocaleString()}</span> ${label} · <span class="pct-label">${pct}%</span>`;
+        }
+      }
+
+      // Build country filled regions on globe
+      function buildCountryFills(geoData, mapData) {
+        // Get features for filling
+        const features = topojson.feature(geoData, geoData.objects.countries).features;
+        const valMap = {};
+        let maxVal = 0;
+        if (mapData && mapData.data) {
+          mapData.data.forEach(function(entry) {
+            const cc = entry[0];
+            const val = entry[1].count || entry[1].blocks || 0;
+            valMap[cc] = val;
+            if (val > maxVal) maxVal = val;
+          });
+        }
+
+        const dark = isDark();
+
+        features.forEach(function(feature) {
+          if (!feature.geometry) return;
+          const name = feature.properties.name;
+          const cc = NAME_TO_ISO2[name] || '';
+          const val = valMap[cc] || 0;
+
+          if (val <= 0) return; // Only draw countries with data
+
+          const coords = feature.geometry.type === 'Polygon'
+            ? [feature.geometry.coordinates]
+            : feature.geometry.type === 'MultiPolygon'
+              ? feature.geometry.coordinates
+              : [];
+
+          // Color intensity based on data value
+          const intensity = maxVal > 0 ? Math.pow(val / maxVal, 0.4) : 0;
+          let fillColor;
+          if (dark) {
+            fillColor = new THREE.Color(0x1c2030).lerp(new THREE.Color(0xf7931a), intensity);
+          } else {
+            fillColor = new THREE.Color(0xeaeef2).lerp(new THREE.Color(0xbc4e00), intensity);
+          }
+
+          coords.forEach(function(polygon) {
+            polygon.forEach(function(ring) {
+              const pts = [];
+              ring.forEach(function(coord) {
+                pts.push(latLngToVector3(coord[1], coord[0], GLOBE_RADIUS * 1.0015));
+              });
+              if (pts.length > 1) {
+                const geo = new THREE.BufferGeometry().setFromPoints(pts);
+                const mat = new THREE.LineBasicMaterial({ color: fillColor, transparent: true, opacity: 0.8, linewidth: 2 });
+                bordersGroup.add(new THREE.Line(geo, mat));
+              }
+            });
+          });
+        });
+      }
+
+      // Build data points (glowing dots)
+      let pointMeshes = [];
+
+      function buildDataPoints(mapData) {
+        while (dataPointsGroup.children.length > 0) {
+          const child = dataPointsGroup.children[0];
+          if (child.geometry) child.geometry.dispose();
+          if (child.material) {
+            if (child.material.map) child.material.map.dispose();
+            child.material.dispose();
+          }
+          dataPointsGroup.remove(child);
+        }
+        pointMeshes = [];
+        if (!mapData) return;
+
+        const dark = isDark();
+        let maxVal = 0;
+        const valMap = {};
+        mapData.data.forEach(function(entry) {
+          const cc = entry[0];
+          const val = entry[1].count || entry[1].blocks || 0;
+          valMap[cc] = val;
+          if (val > maxVal) maxVal = val;
         });
 
-      // Bubbles (top 20)
-      const top20 = mapData.data.slice(0, 20);
-      const rScale = d3.scaleSqrt().domain([0, maxVal]).range([0, W * 0.028]);
+        // Store for raycasting
+        globeState._valMap = valMap;
+        globeState._maxVal = maxVal;
+        globeState._mapData = mapData;
 
-      top20.forEach(([cc, v]: [string, any]) => {
-        const cen = CENTROIDS[cc];
-        if (!cen) return;
-        const [x, y] = proj(cen);
-        if (!x || !y) return;
-        svg.append('circle')
-          .attr('cx', x).attr('cy', y)
-          .attr('r', Math.max(3, rScale(v.count || 0)))
-          .attr('fill', '#f7931a').attr('fill-opacity', 0.5)
-          .attr('stroke', '#f7931a').attr('stroke-width', 1)
-          .attr('pointer-events', 'none');
+        // Create glow texture
+        const glowCanvas = document.createElement('canvas');
+        glowCanvas.width = 64;
+        glowCanvas.height = 64;
+        const ctx = glowCanvas.getContext('2d');
+        const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+        gradient.addColorStop(0, 'rgba(247,147,26,1)');
+        gradient.addColorStop(0.25, 'rgba(247,147,26,0.6)');
+        gradient.addColorStop(0.6, 'rgba(247,147,26,0.15)');
+        gradient.addColorStop(1, 'rgba(247,147,26,0)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 64, 64);
+        const glowTexture = new THREE.CanvasTexture(glowCanvas);
+
+        mapData.data.forEach(function(entry) {
+          const cc = entry[0];
+          const v = entry[1];
+          const cen = CENTROIDS[cc];
+          if (!cen) return;
+          const val = v.count || v.blocks || 0;
+          if (val <= 0) return;
+
+          const pos = latLngToVector3(cen[1], cen[0], GLOBE_RADIUS * 1.005);
+          const sizeFactor = Math.sqrt(val / maxVal);
+          const baseSize = 0.02 + sizeFactor * 0.07;
+
+          // Glow sprite
+          const spriteMat = new THREE.SpriteMaterial({
+            map: glowTexture,
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            opacity: 0.4 + sizeFactor * 0.5,
+          });
+          const sprite = new THREE.Sprite(spriteMat);
+          sprite.position.copy(pos);
+          sprite.scale.set(baseSize * 3, baseSize * 3, 1);
+          sprite._cc = cc;
+          sprite._baseScale = baseSize * 3;
+          dataPointsGroup.add(sprite);
+
+          // Solid center dot
+          const dotGeo = new THREE.SphereGeometry(baseSize * 0.4, 8, 8);
+          const intensity = 0.4 + sizeFactor * 0.6;
+          const dotColor = dark
+            ? new THREE.Color(0xf7931a).multiplyScalar(intensity)
+            : new THREE.Color(0xbc4e00).multiplyScalar(intensity);
+          const dotMat = new THREE.MeshBasicMaterial({ color: dotColor });
+          const dotMesh = new THREE.Mesh(dotGeo, dotMat);
+          dotMesh.position.copy(pos);
+          dotMesh._cc = cc;
+          dataPointsGroup.add(dotMesh);
+
+          pointMeshes.push({ sprite: sprite, dotMesh: dotMesh, baseSize: baseSize * 3, cc: cc });
+        });
+      }
+
+      // Connection arcs between top countries
+      function createArc(fromCC, toCC) {
+        const fromCen = CENTROIDS[fromCC];
+        const toCen = CENTROIDS[toCC];
+        if (!fromCen || !toCen) return;
+
+        const start = latLngToVector3(fromCen[1], fromCen[0], GLOBE_RADIUS * 1.005);
+        const end = latLngToVector3(toCen[1], toCen[0], GLOBE_RADIUS * 1.005);
+
+        // Calculate midpoint and push outward for arc curve
+        const mid = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5);
+        const dist = start.distanceTo(end);
+        mid.normalize().multiplyScalar(GLOBE_RADIUS + dist * 0.35);
+
+        const curve = new THREE.QuadraticBezierCurve3(start, mid, end);
+        const arcPoints = curve.getPoints(50);
+        const arcGeo = new THREE.BufferGeometry().setFromPoints(arcPoints);
+        const arcMat = new THREE.LineBasicMaterial({
+          color: 0xf7931a,
+          transparent: true,
+          opacity: 0,
+        });
+        const arcLine = new THREE.Line(arcGeo, arcMat);
+        arcsGroup.add(arcLine);
+
+        // Animate: grow, hold, fade
+        const startTime = performance.now();
+        const duration = 4000;
+
+        function animateArc() {
+          const elapsed = performance.now() - startTime;
+          const progress = elapsed / duration;
+
+          if (progress >= 1) {
+            arcsGroup.remove(arcLine);
+            arcGeo.dispose();
+            arcMat.dispose();
+            return;
+          }
+
+          if (progress < 0.5) {
+            // Growing phase
+            const drawRange = Math.floor(progress * 2 * 51);
+            arcGeo.setDrawRange(0, drawRange);
+            arcMat.opacity = Math.min(progress * 4, 0.5);
+          } else if (progress < 0.75) {
+            // Hold phase
+            arcGeo.setDrawRange(0, 51);
+            arcMat.opacity = 0.5;
+          } else {
+            // Fade out
+            arcGeo.setDrawRange(0, 51);
+            arcMat.opacity = 0.5 * (1 - (progress - 0.75) / 0.25);
+          }
+
+          requestAnimationFrame(animateArc);
+        }
+        requestAnimationFrame(animateArc);
+      }
+
+      // Arc pairs for connections
+      const ARC_PAIRS = [
+        ['US','DE'],['US','GB'],['US','CN'],['US','JP'],['US','SG'],
+        ['DE','NL'],['DE','FR'],['GB','FR'],['CN','JP'],['US','CA'],
+        ['US','BR'],['DE','CH'],['JP','KR'],['US','AU'],['GB','IN'],
+        ['FR','IT'],['DE','PL'],['US','MX'],['CN','HK'],['SG','AU'],
+      ];
+
+      let arcInterval = null;
+      function startArcAnimation() {
+        if (arcInterval) clearInterval(arcInterval);
+        // Create initial arcs
+        for (let i = 0; i < 3; i++) {
+          const pair = ARC_PAIRS[Math.floor(Math.random() * ARC_PAIRS.length)];
+          createArc(pair[0], pair[1]);
+        }
+        // Create new arcs periodically
+        arcInterval = setInterval(function() {
+          const pair = ARC_PAIRS[Math.floor(Math.random() * ARC_PAIRS.length)];
+          createArc(pair[0], pair[1]);
+        }, 2500);
+      }
+
+      // Raycaster for hover/click
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+      let hoveredCC = null;
+
+      function onMouseMove(event) {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(dataPointsGroup.children, true);
+
+        const tooltip = document.getElementById('map-tooltip');
+
+        if (intersects.length > 0) {
+          const obj = intersects[0].object;
+          const cc = obj._cc;
+          if (cc && globeState._valMap && globeState._valMap[cc]) {
+            hoveredCC = cc;
+            const val = globeState._valMap[cc];
+            const total = globeState._mapData?.total || 1;
+            const pct = ((val / total) * 100).toFixed(1);
+            const label = currentTab === 'ln' ? t('node_label') : t('block_label');
+            tooltip.innerHTML = '<b>' + escHtml(FLAGS[cc] || '') + ' ' + escHtml(getName(cc)) + '</b><br>' + val.toLocaleString() + ' ' + escHtml(label) + ' (' + pct + '%)';
+            tooltip.style.setProperty('--x', (event.clientX - rect.left + 12) + 'px');
+            tooltip.style.setProperty('--y', (event.clientY - rect.top - 10) + 'px');
+            tooltip.classList.remove('hidden');
+            canvas.style.cursor = 'pointer';
+          }
+        } else {
+          if (hoveredCC) {
+            tooltip.classList.add('hidden');
+            hoveredCC = null;
+            canvas.style.cursor = 'grab';
+          }
+        }
+      }
+
+      function onClick(event) {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(dataPointsGroup.children, true);
+
+        if (intersects.length > 0) {
+          const obj = intersects[0].object;
+          const cc = obj._cc;
+          if (cc && globeState._valMap && globeState._valMap[cc]) {
+            const val = globeState._valMap[cc];
+            const mapData = globeState._mapData;
+            const total = mapData?.total || 1;
+            const pct = ((val / total) * 100).toFixed(1);
+            const rank = mapData.data.findIndex(function(entry) { return entry[0] === cc; }) + 1;
+            const label = currentTab === 'ln' ? t('node_label') : t('block_label');
+
+            // Highlight country in list
+            const rows = document.querySelectorAll('.cl-row');
+            rows.forEach(function(r) { r.classList.remove('highlighted'); });
+            const name = getName(cc);
+            rows.forEach(function(r) {
+              if (r.querySelector('.cl-name')?.textContent === name) {
+                r.classList.add('highlighted');
+                r.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              }
+            });
+
+            const detail = document.getElementById('map-detail');
+            if (detail) detail.innerHTML = '<span class="flag-lg">' + (FLAGS[cc] || '') + '</span> <b>' + getName(cc) + '</b> &nbsp;<span class="rank-label">#' + rank + '</span><br><span class="accent fw700">' + val.toLocaleString() + '</span> ' + label + ' · <span class="pct-label">' + pct + '%</span>';
+          }
+        }
+      }
+
+      canvas.addEventListener('mousemove', onMouseMove);
+      canvas.addEventListener('click', onClick);
+
+      // Touch support
+      canvas.addEventListener('touchend', function(e) {
+        if (e.changedTouches.length > 0) {
+          const touch = e.changedTouches[0];
+          const mouseEvent = new MouseEvent('click', {
+            clientX: touch.clientX,
+            clientY: touch.clientY,
+          });
+          onClick(mouseEvent);
+        }
       });
+
+      // Animation loop
+      const clock = new THREE.Clock();
+
+      function animate() {
+        requestAnimationFrame(animate);
+        const elapsed = clock.getElapsedTime();
+
+        controls.update();
+
+        // Pulse effect on data points
+        if (pointMeshes.length > 0) {
+          pointMeshes.forEach(function(pm) {
+            const pulse = 1 + Math.sin(elapsed * 2 + pm.cc.charCodeAt(0)) * 0.12;
+            pm.sprite.scale.set(pm.baseSize * pulse, pm.baseSize * pulse, 1);
+          });
+        }
+
+        renderer.render(scene, camera);
+      }
+
+      // Handle resize
+      function handleResize() {
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        if (canvas.width !== w * renderer.getPixelRatio() || canvas.height !== h * renderer.getPixelRatio()) {
+          renderer.setSize(w, h);
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+        }
+      }
+
+      window.addEventListener('resize', handleResize);
+
+      // Store state for external access
+      globeState = {
+        scene: scene, camera: camera, renderer: renderer, controls: controls,
+        earthMesh: earthMesh, atmosMesh: atmosMesh,
+        bordersGroup: bordersGroup, dataPointsGroup: dataPointsGroup, arcsGroup: arcsGroup,
+        buildCountryOutlines: buildCountryOutlines,
+        buildCountryFills: buildCountryFills,
+        buildDataPoints: buildDataPoints,
+        startArcAnimation: startArcAnimation,
+        GLOBE_RADIUS: GLOBE_RADIUS, latLngToVector3: latLngToVector3, isDark: isDark,
+        THREE: THREE,
+        _valMap: {},
+        _maxVal: 0,
+        _mapData: null,
+        handleResize: handleResize,
+        updateTheme: function() {
+          const dark = isDark();
+          renderer.setClearColor(dark ? 0x0d1117 : 0xf6f8fa);
+          earthMat.color.set(dark ? 0x161b22 : 0xe8ecf0);
+          earthMat.needsUpdate = true;
+        },
+      };
+
+      animate();
+      return globeState;
     }
 
-    function renderCountryList(sorted: [string, { count: number }][], total: number, _unit: string) {
-      const cl = document.getElementById('country-list')!;
+    function updateGlobeTheme() {
+      if (globeState && globeState.updateTheme) {
+        globeState.updateTheme();
+        const mapData = window._mapData;
+        if (mapData && worldGeoRaw) {
+          globeState.buildCountryOutlines(worldGeoRaw);
+          globeState.buildCountryFills(worldGeoRaw, mapData);
+          globeState.buildDataPoints(mapData);
+        }
+      }
+    }
+
+    function renderMap(mapData) {
+      if (!mapData || !globeState) return;
+      if (worldGeoRaw) {
+        globeState.buildCountryOutlines(worldGeoRaw);
+        globeState.buildCountryFills(worldGeoRaw, mapData);
+      }
+      globeState.buildDataPoints(mapData);
+      globeState.startArcAnimation();
+    }
+
+    function renderCountryList(sorted, total, _unit) {
+      const cl = document.getElementById('country-list');
       const top = sorted.slice(0, 30);
-      cl.innerHTML = top.map(([cc, v]) => {
+      cl.innerHTML = top.map(function(entry) {
+        const cc = entry[0];
+        const v = entry[1];
         const val = v.count || 0;
         const pct = ((val / total) * 100).toFixed(1);
         const w = ((val / (top[0][1].count || 1)) * 100).toFixed(0);
-        return `<div class="cl-row">
-          <span class="cl-flag">${escHtml(FLAGS[cc] || '')}</span>
-          <span class="cl-name">${escHtml(getName(cc))}</span>
-          <div class="cl-bar-wrap"><div class="cl-bar" style="--w:${w}%"></div></div>
-          <span class="cl-count">${val.toLocaleString()}</span>
-          <span class="cl-pct">${pct}%</span>
-        </div>`;
+        return '<div class="cl-row">' +
+          '<span class="cl-flag">' + escHtml(FLAGS[cc] || '') + '</span>' +
+          '<span class="cl-name">' + escHtml(getName(cc)) + '</span>' +
+          '<div class="cl-bar-wrap"><div class="cl-bar" style="--w:' + w + '%"></div></div>' +
+          '<span class="cl-count">' + val.toLocaleString() + '</span>' +
+          '<span class="cl-pct">' + pct + '%</span>' +
+        '</div>';
       }).join('');
     }
 
-    // Load world GeoJSON (Natural Earth 110m)
+    // Init: load globe + world data + API data
     async function init() {
       try {
-        const geo = await fetchRetry('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json', 15000).then(r => r.json());
-        worldGeo = topojson.feature(geo, geo.objects.countries);
+        await initGlobe();
+
+        const geo = await fetchRetry('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json', 15000).then(function(r) { return r.json(); });
+        worldGeoRaw = geo;
+
         loadData();
       } catch (e) {
-        worldGeo = { features: [] };
+        console.error('init error:', e);
+        worldGeoRaw = null;
         loadData();
       }
     }
@@ -516,24 +965,24 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
 
     // ── Event listeners ──
     document.getElementById('lang-btn')?.addEventListener('click', toggleLang);
-    document.querySelectorAll('#lang-menu button').forEach(function (btn) {
+    document.querySelectorAll('#lang-menu button').forEach(function(btn) {
       const l = btn.textContent === '한국어' ? 'ko' : btn.textContent === 'English' ? 'en' : 'ja';
-      btn.addEventListener('click', function () { setLang(l); });
+      btn.addEventListener('click', function() { setLang(l); });
     });
     document.getElementById('theme-btn')?.addEventListener('click', toggleTheme);
-    document.getElementById('tab-ln')?.addEventListener('click', function () { switchTab('ln'); });
-    document.getElementById('tab-mining')?.addEventListener('click', function () { switchTab('mining'); });
+    document.getElementById('tab-ln')?.addEventListener('click', function() { switchTab('ln'); });
+    document.getElementById('tab-mining')?.addEventListener('click', function() { switchTab('mining'); });
 
     // Responsive resize
-    window.addEventListener('resize', function () {
-      clearTimeout((window as any)._mapResize);
-      (window as any)._mapResize = setTimeout(function () {
-        if ((window as any)._mapData) renderMap((window as any)._mapData);
+    window.addEventListener('resize', function() {
+      clearTimeout(window._mapResize);
+      window._mapResize = setTimeout(function() {
+        if (globeState) globeState.handleResize();
       }, 300);
     });
 
     // ── Mobile hamburger ──
-    document.getElementById('hamburger-btn')?.addEventListener('click', function () {
+    document.getElementById('hamburger-btn')?.addEventListener('click', function() {
       const panel = document.getElementById('hamburger-panel');
       if (!panel) return;
       const open = panel.classList.toggle('open');
@@ -541,24 +990,24 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
       if (open) updateHamburger();
     });
 
-    document.addEventListener('click', function (e) {
+    document.addEventListener('click', function(e) {
       const wrap = document.querySelector('.hamburger-wrap');
       const panel = document.getElementById('hamburger-panel');
-      if (wrap && panel && !wrap.contains(e.target as Node)) {
+      if (wrap && panel && !wrap.contains(e.target)) {
         panel.classList.remove('open');
         document.getElementById('hamburger-btn')?.setAttribute('aria-expanded', 'false');
       }
     });
 
-    document.querySelectorAll<HTMLElement>('#hamburger-panel .settings-lang-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        setLang(btn.dataset.lang!);
+    document.querySelectorAll('#hamburger-panel .settings-lang-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        setLang(btn.dataset.lang);
         document.getElementById('hamburger-panel')?.classList.remove('open');
         document.getElementById('hamburger-btn')?.setAttribute('aria-expanded', 'false');
       });
     });
 
-    document.getElementById('hamburger-theme-btn')?.addEventListener('click', function () {
+    document.getElementById('hamburger-theme-btn')?.addEventListener('click', function() {
       toggleTheme();
       updateHamburger();
     });
@@ -567,7 +1016,7 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
       const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
       const icon = document.getElementById('hamburger-theme-icon');
       if (icon) icon.innerHTML = isDark ? sunSvgSm : moonSvgSm;
-      document.querySelectorAll<HTMLElement>('#hamburger-panel .settings-lang-btn').forEach(function (b) {
+      document.querySelectorAll('#hamburger-panel .settings-lang-btn').forEach(function(b) {
         b.classList.toggle('active', b.dataset.lang === lang);
       });
     }
