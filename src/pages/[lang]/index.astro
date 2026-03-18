@@ -66,9 +66,17 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
         <div id="map-tooltip" class="map-tooltip hidden"></div>
       </div>
     </div>
-    <!-- RIGHT: Stats + Country List -->
+    <!-- RIGHT: Data Panel -->
     <aside class="map-data-col">
+      <!-- Network History (top) -->
+      <div class="sidebar-section ln-only" id="network-history-section">
+        <h3 class="section-title" data-ko="네트워크 추이" data-en="Network History" data-ja="ネットワーク推移">Network History</h3>
+        <div id="network-chart"></div>
+      </div>
+
+      <!-- Mining stats (Mining tab only) -->
       <div id="global-stats" class="global-stats" aria-live="polite"></div>
+
       <div id="country-list" class="country-list" aria-live="polite"></div>
 
       <!-- Node Search (Lightning tab only) -->
@@ -76,7 +84,7 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
         <h3 class="section-title" data-ko="노드 검색" data-en="Node Search" data-ja="ノード検索">Node Search</h3>
         <div class="node-search-row">
           <input type="text" id="node-search-input" class="search-input" data-ko="노드 별칭 또는 pubkey..." data-en="Node alias or pubkey..." data-ja="ノードエイリアスまたはpubkey..." placeholder="Node alias or pubkey..." />
-          <button id="node-search-btn" class="search-btn" data-ko="검색" data-en="Search" data-ja="検索">Search</button>
+          <button id="node-search-btn" class="search-btn" data-ko="검색" data-en="Search" data-ja="検색">Search</button>
         </div>
         <div id="node-search-results"></div>
       </div>
@@ -89,12 +97,6 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
 
       <!-- Node Detail (shown on click/search) -->
       <div id="node-detail" class="node-detail hidden"></div>
-
-      <!-- Network History (Lightning tab only) -->
-      <div class="sidebar-section ln-only" id="network-history-section">
-        <h3 class="section-title" data-ko="네트워크 추이" data-en="Network History" data-ja="ネットワーク推移">Network History</h3>
-        <div id="network-chart"></div>
-      </div>
     </aside>
   </main>
 
@@ -390,10 +392,7 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
           ]);
           const total = countries.reduce(function(s, n) { return s + (n.count || 0); }, 0);
           const s = stats.latest || stats;
-          gs.innerHTML =
-            '<div class="gs-card"><div class="gs-val">' + (s.node_count || 0).toLocaleString() + '</div><div class="gs-lbl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> ' + t('total_nodes') + '</div></div>' +
-            '<div class="gs-card"><div class="gs-val">' + (s.channel_count || 0).toLocaleString() + '</div><div class="gs-lbl">' + t('channels') + '</div></div>' +
-            '<div class="gs-card"><div class="gs-val">' + ((s.total_capacity || 0) / 1e8).toFixed(0) + ' BTC</div><div class="gs-lbl">' + t('capacity') + '</div></div>';
+          gs.innerHTML = ''; // Lightning stats shown in Network History widget
 
           const sorted = countries.map(function(n) { return [n.iso, { count: n.count, share: n.share }]; }).sort(function(a, b) { return b[1].count - a[1].count; });
           window._mapData = { type: 'ln', data: sorted, total: total };
