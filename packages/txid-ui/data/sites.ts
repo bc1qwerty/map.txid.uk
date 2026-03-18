@@ -53,6 +53,21 @@ export const sites: SiteItem[] = [
     name: { ko: '배우기', en: 'Learn', ja: '学習' },
   },
   {
+    label: 'sim', url: 'https://sim.txid.uk', host: 'sim.txid.uk',
+    icon: '<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>',
+    name: { ko: '시뮬레이터', en: 'Simulator', ja: 'シミュレータ' },
+  },
+  {
+    label: 'glossary', url: 'https://glossary.txid.uk', host: 'glossary.txid.uk',
+    icon: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="14" y2="11"/>',
+    name: { ko: '용어사전', en: 'Glossary', ja: '用語集' },
+  },
+  {
+    label: 'macro', url: 'https://macro.txid.uk', host: 'macro.txid.uk',
+    icon: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+    name: { ko: '매크로', en: 'Macro', ja: 'マクロ' },
+  },
+  {
     label: 'apps', url: 'https://apps.txid.uk', host: 'apps.txid.uk',
     icon: '<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
     name: { ko: '앱모음', en: 'Apps', ja: 'アプリ' },
