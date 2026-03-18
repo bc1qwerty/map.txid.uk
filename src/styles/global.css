@@ -122,8 +122,12 @@ header { background: var(--bg2); border-bottom: 1px solid var(--border); positio
 #map-detail { font-family: var(--font-ko); font-size: .82rem; color: var(--text1); line-height: 1.8; min-height: 2.5rem; }
 
 /* Footer */
-footer { border-top: 1px solid var(--border); padding: 16px 20px; }
-.footer-inner { max-width: var(--max-w); margin: 0 auto; display: flex; justify-content: space-between; font-size: .7rem; color: var(--text3); }
+footer { border-top: 1px solid var(--border); padding: 16px 20px; margin-top: 40px; }
+.footer-inner { max-width: var(--max-w); margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: .7rem; color: var(--text3); font-family: var(--font-ko); }
+.footer-inner a { color: var(--text2); text-decoration: none; }
+.footer-inner a:hover { color: var(--accent-text); }
+.footer-sep { color: var(--text3); margin: 0 4px; }
+.footer-links { display: flex; align-items: center; flex-wrap: wrap; }
 
 /* Learn links */
 .learn-links { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: 7px; margin: 10px auto; max-width: var(--max-w); font-size: .78rem; }
