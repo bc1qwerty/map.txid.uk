@@ -7,7 +7,7 @@
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Resource-Policy: cross-origin
   X-DNS-Prefetch-Control: off
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://umami.txid.uk 'unsafe-inline' https://cdn.jsdelivr.net https://www.googletagmanager.com https://gc.zgo.at https://api.txid.uk; connect-src 'self' https://umami.txid.uk https://api.txid.uk https://mempool.space https://cdn.jsdelivr.net https://txid.goatcounter.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://api.txid.uk; font-src https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: https://api.txid.uk; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://apps.txid.uk https://umami.txid.uk 'unsafe-inline' https://cdn.jsdelivr.net https://api.txid.uk; connect-src 'self' https://umami.txid.uk https://api.txid.uk https://mempool.space https://cdn.jsdelivr.net; style-src 'self' https://apps.txid.uk 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://api.txid.uk; font-src https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: https://api.txid.uk; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'
 
 /*.css
   Cache-Control: public, max-age=31536000, immutable
