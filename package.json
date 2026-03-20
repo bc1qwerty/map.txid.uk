@@ -12,7 +12,12 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.1",
     "@txid/ui": "file:./packages/txid-ui",
-    "astro": "^6.0.5"
+    "@types/three": "^0.183.1",
+    "@types/topojson-client": "^3.1.5",
+    "astro": "^6.0.5",
+    "three": "^0.183.2",
+    "topojson-client": "^3.1.0"
   }
 }

@@ -1,4 +1,6 @@
 ---
+import { ClientRouter } from 'astro:transitions';
+
 interface Props {
   title: string;
   description: string;
@@ -54,12 +56,9 @@ const canonicalUrl = `${site}/${lang}/`;
     "inLanguage": lang,
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
   })} />
-  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js" integrity="sha384-Ukv1p/xTma6P4/2bY5KzWBw+ydSpXmhCMtyciIQVDJ1RmOxtCYNMF1uXT9T63H67" crossorigin="anonymous" is:inline></script>
-  <script type="importmap" is:inline>
-  {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}
-  </script>
   <link rel="stylesheet" href="/platform-search.css">
   <script src="/platform-search.js" defer is:inline></script>
+  <ClientRouter />
 </head>
 <body>
   <a href="#main" class="skip-link">{lang === 'en' ? 'Skip to content' : lang === 'ja' ? '本文へスキップ' : '본문으로 건너뛰기'}</a>

@@ -110,6 +110,9 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
     window.__pageLang = pageLang;
   </script>
 
+  <!-- Three.js + topojson bundled from npm (tree-shaken by Astro/Vite) -->
+  <script src="../../scripts/three-setup.ts"></script>
+
   <script src="/js/map-data.js" is:inline></script>
   <script src="/js/map-i18n.js" is:inline></script>
   <script src="/js/map-engine.js" is:inline></script>

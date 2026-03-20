@@ -158,9 +158,9 @@
 
   // ── Three.js Globe ──
   async function initGlobe() {
-    var THREE = await import('three');
-    var OrbitControlsModule = await import('three/addons/controls/OrbitControls.js');
-    var OrbitControls = OrbitControlsModule.OrbitControls;
+    // Use npm-bundled Three.js exposed on window by three-setup.ts
+    var THREE = window.__THREE;
+    var OrbitControls = window.__OrbitControls;
 
     var canvas = document.getElementById('globe-canvas');
     if (!canvas) return;
