@@ -15,15 +15,15 @@ export function getStaticPaths() {
 const { lang } = Astro.params;
 
 const titles: Record<string, string> = {
-  ko: 'Bitcoin Lightning 노드 지도 & 노드 탐색기 | txid.uk',
-  en: 'Bitcoin Lightning Node Map & Node Explorer | txid.uk',
-  ja: 'Bitcoin Lightning ノード地図 & ノード探索 | txid.uk',
+  ko: '비트코인 네트워크 지도 — 노드 & 채굴 인프라 탐색 | map.txid.uk',
+  en: 'Bitcoin Network Map — Node & Mining Infrastructure Explorer | map.txid.uk',
+  ja: 'ビットコイン ネットワーク地図 — ノード & マイニング探索 | map.txid.uk',
 };
 
 const descriptions: Record<string, string> = {
-  ko: '비트코인 라이트닝 노드 및 채굴 풀의 국가별 분포를 세계 지도 위에 시각화. 상위 노드 용량·채널 수, 노드 검색, 네트워크 통계.',
-  en: 'Visualize global distribution of Bitcoin Lightning nodes and mining pools on a world map. Top node capacity, channels, node search, network statistics.',
-  ja: 'ビットコイン ライトニングノードとマイニングプールの国別分布を世界地図上で可視化。上位ノード容量・チャネル数、ノード検索、ネットワーク統計。',
+  ko: '비트코인 네트워크 지도. 전 세계 비트코인 노드와 채굴 인프라를 시각적으로 탐색하세요.',
+  en: 'Bitcoin network map. Visually explore Bitcoin nodes and mining infrastructure around the world.',
+  ja: 'ビットコインネットワーク地図。世界中のビットコインノードとマイニングインフラを視覚的に探索。',
 };
 
 const i18n: Record<string, Record<string, string>> = {

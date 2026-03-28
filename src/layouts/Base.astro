@@ -32,10 +32,17 @@ const canonicalUrl = `${site}/${lang}/`;
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:url" content={canonicalUrl}>
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:image" content={site + '/og-image.png'}>
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@bc1qwerty">
   <meta name="twitter:title" content={title}>
   <meta name="twitter:description" content={description}>
+  <meta name="twitter:image" content={site + '/og-image.png'}>
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "WebApplication",
