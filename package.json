@@ -9,7 +9,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "deploy": "astro build && wrangler pages deploy dist --project-name=map-txid-uk --branch=main && notify-deploy.sh map.txid.uk"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.1",
