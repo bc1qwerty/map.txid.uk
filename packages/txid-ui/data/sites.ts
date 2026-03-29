@@ -18,11 +18,6 @@ export const sites: SiteItem[] = [
     name: { ko: '도구', en: 'Tools', ja: 'ツール' },
   },
   {
-    label: 'stats', url: 'https://stats.txid.uk', host: 'stats.txid.uk',
-    icon: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
-    name: { ko: '통계', en: 'Stats', ja: '統計' },
-  },
-  {
     label: 'map', url: 'https://map.txid.uk', host: 'map.txid.uk',
     icon: '<polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/>',
     name: { ko: '지도', en: 'Map', ja: '地図' },
