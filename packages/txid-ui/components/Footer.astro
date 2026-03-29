@@ -1,17 +1,60 @@
 ---
+import { sites } from '../data/sites';
 ---
 
 <footer>
+  <div class="footer-sites">
+    {sites.map((s) => (
+      <a href={s.url} class="footer-site-link" target={s.host === 'apps.txid.uk' ? undefined : '_blank'} rel="noopener">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <Fragment set:html={s.icon} />
+        </svg>
+        <span data-ko={s.name.ko} data-en={s.name.en} data-ja={s.name.ja}>{s.name.ko}</span>
+      </a>
+    ))}
+  </div>
   <div class="footer-inner">
     <span>&copy; 2025 <a href="https://txid.uk">txid.uk</a> — Bitcoin Explorer</span>
     <span class="footer-links">
-      <span data-ko="mempool.space API 사용" data-en="Powered by mempool.space API" data-ja="mempool.space API 使用">Powered by mempool.space API</span>
-      <span class="footer-sep">·</span>
       <a href="https://x.com/bc1qwerty" target="_blank" rel="me noopener" aria-label="X">&#x1d54f;</a>
-      <span class="footer-sep">·</span>
+      <span class="footer-sep">&middot;</span>
       <a href="https://bsky.app/profile/txid.uk" target="_blank" rel="me noopener" aria-label="Bluesky">Bluesky</a>
-      <span class="footer-sep">·</span>
+      <span class="footer-sep">&middot;</span>
       <a href="https://njump.me/npub16qucsfagff58mkac3ynwqyy9rkhw6wgnjk6xre2eagfqxkudqngs4gfc2d" target="_blank" rel="me noopener" aria-label="Nostr">Nostr</a>
     </span>
   </div>
 </footer>
+
+<style>
+  .footer-sites {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 20px;
+    padding: 20px 16px 16px;
+    border-top: 1px solid var(--border, #222);
+  }
+
+  .footer-site-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: .75rem;
+    color: var(--text3, #888);
+    text-decoration: none;
+    transition: color .2s;
+  }
+
+  .footer-site-link:hover {
+    color: var(--accent, #f7931a);
+  }
+
+  .footer-site-link svg {
+    opacity: .6;
+    flex-shrink: 0;
+  }
+
+  .footer-site-link:hover svg {
+    opacity: 1;
+  }
+</style>
