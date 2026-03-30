@@ -4,6 +4,8 @@
  * network history chart, and all UI event bindings.
  *
  * Depends on: map-data.js, map-i18n.js, map-engine.js (window.txidMap)
+ *
+ * Improvement #7: Country selection filters top nodes
  */
 (function () {
   'use strict';
@@ -14,20 +16,48 @@
   var fetchRetry = M.fetchRetry;
   var API = M.API;
 
+  // ── #7: State for country filtering ──
+  var allTopNodes = [];
+  var selectedCountryCC = null;
+
   // ── Render top nodes list ──
-  function renderTopNodes(nodes) {
+  function renderTopNodes(nodes, filteredCC) {
     var el = document.getElementById('top-nodes');
     if (!el) return;
     if (!nodes || !nodes.length) {
       el.innerHTML = '<div class="empty-msg">' + t('no_results') + '</div>';
       return;
     }
-    el.innerHTML = nodes.slice(0, 10).map(function (n, i) {
+
+    var headerHtml = '';
+    if (filteredCC) {
+      var lang = M.lang;
+      var showAllLabel = lang === 'ko' ? '\uC804\uCCB4 \uBCF4\uAE30' : lang === 'ja' ? '\u3059\u3079\u3066\u898B\u308B' : 'Show All';
+      var countryName = M.getName(filteredCC);
+      var flag = M.FLAGS[filteredCC] || '';
+      headerHtml = '<div class="node-filter-bar">' +
+        '<span class="node-filter-label">' + escHtml(flag + ' ' + countryName) + '</span>' +
+        '<button class="node-filter-clear" id="clear-country-filter">' + escHtml(showAllLabel) + '</button>' +
+        '</div>';
+    }
+
+    el.innerHTML = headerHtml + nodes.slice(0, 10).map(function (n, i) {
       return '<div class="node-item" data-pubkey="' + escHtml(n.publicKey) + '" role="button" tabindex="0">' +
         '<span class="node-alias">#' + (i + 1) + ' ' + (escHtml(n.alias) || n.publicKey.slice(0, 16) + '\u2026') + '</span>' +
         '<span class="node-capacity">' + ((n.capacity || 0) / 1e8).toFixed(2) + ' BTC</span>' +
       '</div>';
     }).join('');
+
+    // #7: Bind clear filter button
+    if (filteredCC) {
+      var clearBtn = document.getElementById('clear-country-filter');
+      if (clearBtn) {
+        clearBtn.addEventListener('click', function () {
+          selectedCountryCC = null;
+          renderTopNodes(allTopNodes, null);
+        });
+      }
+    }
   }
 
   // ── Load top nodes from API ──
@@ -36,13 +66,64 @@
     if (!el) return;
     el.innerHTML = '<div class="empty-msg">' + t('loading') + '</div>';
     try {
-      var nodes = await fetchRetry(API + '/v1/lightning/nodes/rankings/connectivity', 10000).then(function (r) { return r.json(); });
-      renderTopNodes(nodes);
+      var fetchFn = M.cachedFetch || fetchRetry;
+      var nodes = await fetchFn(API + '/v1/lightning/nodes/rankings/connectivity', 10000).then(function (r) { return r.json(); });
+      allTopNodes = nodes || [];
+      selectedCountryCC = null;
+      renderTopNodes(allTopNodes, null);
     } catch (e) {
       console.error('loadTopNodes error:', e);
       el.innerHTML = '<div class="empty-msg">' + t('load_fail') + '</div>';
     }
   }
+
+  // ── #7: Filter nodes by country ──
+  function filterNodesByCountry(cc) {
+    if (!cc || !allTopNodes.length) return;
+    selectedCountryCC = cc;
+
+    // Filter nodes that belong to this country
+    var countryName = M.EN_NAMES[cc] || '';
+    var filtered = allTopNodes.filter(function (n) {
+      // Check multiple country fields
+      var nodeCountry = (n.country && (n.country.en || n.country.de || '')) || '';
+      var nodeIso = n.iso_code || n.country_id || '';
+      return nodeIso.toUpperCase() === cc ||
+        nodeCountry.toLowerCase().indexOf(countryName.toLowerCase()) !== -1;
+    });
+
+    if (filtered.length > 0) {
+      renderTopNodes(filtered, cc);
+    } else {
+      // If no match found in current data, show message but keep data
+      var el = document.getElementById('top-nodes');
+      if (el) {
+        var lang = M.lang;
+        var showAllLabel = lang === 'ko' ? '\uC804\uCCB4 \uBCF4\uAE30' : lang === 'ja' ? '\u3059\u3079\u3066\u898B\u308B' : 'Show All';
+        var flag = M.FLAGS[cc] || '';
+        el.innerHTML = '<div class="node-filter-bar">' +
+          '<span class="node-filter-label">' + escHtml(flag + ' ' + M.getName(cc)) + '</span>' +
+          '<button class="node-filter-clear" id="clear-country-filter">' + escHtml(showAllLabel) + '</button>' +
+          '</div>' +
+          '<div class="empty-msg">' + t('no_results') + '</div>';
+        var clearBtn = document.getElementById('clear-country-filter');
+        if (clearBtn) {
+          clearBtn.addEventListener('click', function () {
+            selectedCountryCC = null;
+            renderTopNodes(allTopNodes, null);
+          });
+        }
+      }
+    }
+  }
+
+  // ── Listen for country-selected events (#7) ──
+  document.addEventListener('country-selected', function (e) {
+    var cc = e.detail && e.detail.cc;
+    if (cc && M.currentTab === 'ln') {
+      filterNodesByCountry(cc);
+    }
+  });
 
   // ── Search for a node ──
   async function searchNode() {
@@ -55,14 +136,15 @@
     if (/^[0-9a-f]{66}$/.test(q)) { await loadNodeDetail(q); return; }
     if (topEl) topEl.innerHTML = '<div class="empty-msg">' + t('searching') + '</div>';
     try {
-      var res = await fetchRetry(API + '/v1/lightning/search?searchText=' + encodeURIComponent(q) + '&resultAmount=10', 10000).then(function (r) { return r.json(); });
+      var fetchFn = M.cachedFetch || fetchRetry;
+      var res = await fetchFn(API + '/v1/lightning/search?searchText=' + encodeURIComponent(q) + '&resultAmount=10', 10000).then(function (r) { return r.json(); });
       var nodes = res.nodes || [];
       if (!nodes.length) {
         if (topEl) topEl.innerHTML = '<div class="empty-msg">' + t('no_results') + '</div>';
         return;
       }
       if (nodes.length === 1) { await loadNodeDetail(nodes[0].publicKey); return; }
-      renderTopNodes(nodes);
+      renderTopNodes(nodes, null);
     } catch (e) {
       console.error('searchNode error:', e);
       if (topEl) topEl.innerHTML = '<div class="empty-msg">' + t('search_error') + '</div>';
@@ -76,7 +158,8 @@
     el.classList.remove('hidden');
     el.innerHTML = '<div class="empty-msg">' + t('loading') + '</div>';
     try {
-      var n = await fetchRetry(API + '/v1/lightning/nodes/' + pubkey, 10000).then(function (r) { return r.json(); });
+      var fetchFn = M.cachedFetch || fetchRetry;
+      var n = await fetchFn(API + '/v1/lightning/nodes/' + pubkey, 10000).then(function (r) { return r.json(); });
       var lang = M.lang;
       el.innerHTML =
         '<div class="nd-title">' + (escHtml(n.alias) || pubkey.slice(0, 20) + '\u2026') + '</div>' +
@@ -97,7 +180,8 @@
     var el = document.getElementById('network-chart');
     if (!el) return;
     try {
-      var d = await fetchRetry(API + '/v1/lightning/statistics/2y', 15000).then(function (r) { return r.json(); });
+      var fetchFn = M.cachedFetch || fetchRetry;
+      var d = await fetchFn(API + '/v1/lightning/statistics/2y', 15000).then(function (r) { return r.json(); });
       if (!Array.isArray(d) || !d.length) return;
       var cur = d[0], old = d[d.length - 1];
       var getNodes = function (x) { return (x.clearnet_nodes || 0) + (x.tor_nodes || 0) + (x.unannounced_nodes || 0) + (x.clearnet_tor_nodes || 0); };
@@ -122,6 +206,7 @@
   M.loadNetworkHistory = loadNetworkHistory;
   M.searchNode = searchNode;
   M.loadNodeDetail = loadNodeDetail;
+  M.filterNodesByCountry = filterNodesByCountry;
 
   // ── Event listeners ──
   // Language
@@ -134,7 +219,7 @@
   // Theme
   document.getElementById('theme-btn')?.addEventListener('click', M.toggleTheme);
 
-  // Tabs
+  // Tabs (mobile only)
   document.getElementById('tab-ln')?.addEventListener('click', function () { M.switchTab('ln'); });
   document.getElementById('tab-mining')?.addEventListener('click', function () { M.switchTab('mining'); });
 

@@ -14,47 +14,58 @@ import { sites } from '../data/sites';
     ))}
   </div>
   <div class="footer-inner">
-    <span>&copy; 2025 <a href="https://txid.uk">txid.uk</a> — Bitcoin Explorer</span>
-    <span class="footer-links">
-      <a href="https://x.com/bc1qwerty" target="_blank" rel="me noopener" aria-label="X">&#x1d54f;</a>
-      <span class="footer-sep">&middot;</span>
-      <a href="https://bsky.app/profile/txid.uk" target="_blank" rel="me noopener" aria-label="Bluesky">Bluesky</a>
-      <span class="footer-sep">&middot;</span>
-      <a href="https://njump.me/npub16qucsfagff58mkac3ynwqyy9rkhw6wgnjk6xre2eagfqxkudqngs4gfc2d" target="_blank" rel="me noopener" aria-label="Nostr">Nostr</a>
-    </span>
+    <div class="footer-eco">
+      <a href="https://txid.uk">TX Explorer</a>
+      <a href="https://learn.txid.uk">BTC Education</a>
+      <a href="https://news.txid.uk">News</a>
+      <a href="https://community.txid.uk">Community</a>
+      <a href="https://macro.txid.uk">Macro Analysis</a>
+      <a href="https://tools.txid.uk">Dev Tools</a>
+      <a href="https://apps.txid.uk">Apps</a>
+      <a href="https://sim.txid.uk">Mining Simulator</a>
+      <a href="https://map.txid.uk">Node Map</a>
+      <a href="https://portfolio.txid.uk">Portfolio</a>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2025 <a href="https://txid.uk">txid.uk</a></span>
+      <span class="footer-links">
+        <a href="https://x.com/bc1qwerty" target="_blank" rel="me noopener" aria-label="X">&#x1d54f;</a>
+        <span class="footer-sep">·</span>
+        <a href="https://bsky.app/profile/txid.uk" target="_blank" rel="me noopener" aria-label="Bluesky">Bluesky</a>
+        <span class="footer-sep">·</span>
+        <a href="https://njump.me/npub16qucsfagff58mkac3ynwqyy9rkhw6wgnjk6xre2eagfqxkudqngs4gfc2d" target="_blank" rel="me noopener" aria-label="Nostr">Nostr</a>
+      </span>
+    </div>
   </div>
 </footer>
 
 <style>
-  .footer-sites {
+  .footer-eco {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px 20px;
-    padding: 20px 16px 16px;
-    border-top: 1px solid var(--border, #222);
+    gap: 6px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border, #21262d);
   }
-
-  .footer-site-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: .75rem;
-    color: var(--text3, #888);
+  .footer-eco a {
+    font-size: .72rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border, #21262d);
+    color: var(--text2, #8b949e);
     text-decoration: none;
-    transition: color .2s;
+    transition: color .2s, border-color .2s;
   }
-
-  .footer-site-link:hover {
+  .footer-eco a:hover {
     color: var(--accent, #f7931a);
+    border-color: rgba(247, 147, 26, 0.3);
   }
-
-  .footer-site-link svg {
-    opacity: .6;
-    flex-shrink: 0;
-  }
-
-  .footer-site-link:hover svg {
-    opacity: 1;
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 </style>

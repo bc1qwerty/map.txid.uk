@@ -32,7 +32,7 @@
 
   /* 폰트 */
   --font:    'Space Mono', monospace;
-  --font-ko: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  --font-ko: 'Pretendard Variable', 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif;
 
   /* 사이징 */
   --radius: 8px;

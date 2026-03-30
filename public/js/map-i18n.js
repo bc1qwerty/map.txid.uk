@@ -11,7 +11,7 @@
   var M = window.txidMap = window.txidMap || {};
 
   // ── Determine language ──
-  var pageLang = window.__pageLang || 'ko';
+  var pageLang = window.__pageLang || 'en';
   var lang = localStorage.getItem('lang') || pageLang;
   M.lang = lang;
   M.pageLang = pageLang;
@@ -39,6 +39,10 @@
       node_load_fail: '\uB178\uB4DC \uC815\uBCF4 \uB85C\uB4DC \uC2E4\uD328',
       total_node_count: '\uCD1D \uB178\uB4DC \uC218', channel_count: '\uCC44\uB110 \uC218',
       total_capacity_label: '\uCD1D \uC6A9\uB7C9', reference: '\uAE30\uC900', change_2y: '2\uB144 \uC804 \uB300\uBE44 \uBCC0\uD654',
+      quad_ln: '\uB77C\uC774\uD2B8\uB2DD', quad_mining: '\uB9C8\uC774\uB2DD', quad_fullnode: '\uD480 \uB178\uB4DC', quad_isp: 'ISP',
+      quad_ln_unit: '\uB178\uB4DC', quad_mining_unit: '\uBE14\uB85D', quad_fullnode_unit: '\uB178\uB4DC', quad_isp_unit: 'ISP',
+      isp_concentration: '\uC0C1\uC704 3\uC0AC \uC810\uC720\uC728',
+      click_expand: '\uD074\uB9AD\uD558\uC5EC \uD655\uB300', press_esc: 'ESC\uB85C \uBCF5\uADC0',
     },
     en: {
       loading: 'Loading\u2026',
@@ -53,6 +57,10 @@
       node_load_fail: 'Failed to load node info',
       total_node_count: 'Total Nodes', channel_count: 'Channels',
       total_capacity_label: 'Total Capacity', reference: 'Reference', change_2y: 'Change over 2 years',
+      quad_ln: 'Lightning', quad_mining: 'Mining', quad_fullnode: 'Full Nodes', quad_isp: 'ISP',
+      quad_ln_unit: 'nodes', quad_mining_unit: 'blocks', quad_fullnode_unit: 'nodes', quad_isp_unit: 'ISPs',
+      isp_concentration: 'Top 3 share',
+      click_expand: 'Click to expand', press_esc: 'ESC to return',
     },
     ja: {
       loading: '\u8AAD\u307F\u8FBC\u307F\u4E2D\u2026',
@@ -67,11 +75,15 @@
       node_load_fail: '\u30CE\u30FC\u30C9\u60C5\u5831\u306E\u8AAD\u307F\u8FBC\u307F\u306B\u5931\u6557\u3057\u307E\u3057\u305F',
       total_node_count: '\u7DCF\u30CE\u30FC\u30C9\u6570', channel_count: '\u30C1\u30E3\u30CD\u30EB\u6570',
       total_capacity_label: '\u7DCF\u5BB9\u91CF', reference: '\u57FA\u6E96', change_2y: '2\u5E74\u524D\u304B\u3089\u306E\u5909\u5316',
+      quad_ln: '\u30E9\u30A4\u30C8\u30CB\u30F3\u30B0', quad_mining: '\u30DE\u30A4\u30CB\u30F3\u30B0', quad_fullnode: '\u30D5\u30EB\u30CE\u30FC\u30C9', quad_isp: 'ISP',
+      quad_ln_unit: '\u30CE\u30FC\u30C9', quad_mining_unit: '\u30D6\u30ED\u30C3\u30AF', quad_fullnode_unit: '\u30CE\u30FC\u30C9', quad_isp_unit: 'ISP',
+      isp_concentration: '\u4E0A\u4F4D3\u793E\u5360\u6709\u7387',
+      click_expand: '\u30AF\u30EA\u30C3\u30AF\u3067\u62E1\u5927', press_esc: 'ESC\u3067\u623B\u308B',
     },
   };
 
   function t(k) {
-    return (i18n[M.lang] && i18n[M.lang][k]) || i18n.ko[k] || k;
+    return (i18n[M.lang] && i18n[M.lang][k]) || i18n.en[k] || k;
   }
 
   // ── Theme SVGs ──
@@ -96,7 +108,7 @@
     }
     document.documentElement.lang = l;
     var btn = document.getElementById('lang-btn');
-    if (btn) btn.textContent = ({ ko: 'KO', en: 'EN', ja: 'JA' })[l] || 'KO';
+    if (btn) btn.textContent = ({ ko: 'KO', en: 'EN', ja: 'JA' })[l] || 'EN';
     document.getElementById('lang-menu')?.classList.remove('open');
     document.querySelectorAll('[data-ko]').forEach(function (el) {
       var val = el.dataset[l] || el.dataset.en || el.dataset.ko;

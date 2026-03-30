@@ -84,10 +84,46 @@ const mapAriaLabel = lang === 'en' ? 'World map of Bitcoin nodes and mining pool
       <div id="node-detail" class="node-detail hidden"></div>
     </nav>
 
-    <!-- CENTER: 3D Globe -->
+    <!-- CENTER: 3D Globe (Quad Viewport) -->
     <div class="map-globe-col">
       <div class="map-wrap">
-        <div class="map-tab-overlay">
+        <!-- Quad grid overlay (desktop only) -->
+        <div class="quad-grid" id="quad-grid">
+          <div class="quad-cell" data-quad="ln">
+            <div class="quad-header">
+              <span class="quad-icon">&#9889;</span>
+              <span class="quad-label" data-ko="라이트닝" data-en="Lightning" data-ja="ライトニング">Lightning</span>
+              <span class="quad-stat" id="quad-stat-ln"></span>
+            </div>
+            <div class="quad-mini-list" id="quad-list-ln"></div>
+          </div>
+          <div class="quad-cell" data-quad="mining">
+            <div class="quad-header">
+              <span class="quad-icon">&#9935;</span>
+              <span class="quad-label" data-ko="마이닝" data-en="Mining" data-ja="マイニング">Mining</span>
+              <span class="quad-stat" id="quad-stat-mining"></span>
+            </div>
+            <div class="quad-mini-list" id="quad-list-mining"></div>
+          </div>
+          <div class="quad-cell" data-quad="fullnode">
+            <div class="quad-header">
+              <span class="quad-icon">&#128423;</span>
+              <span class="quad-label" data-ko="풀 노드" data-en="Full Nodes" data-ja="フルノード">Full Nodes</span>
+              <span class="quad-stat" id="quad-stat-fullnode"></span>
+            </div>
+            <div class="quad-mini-list" id="quad-list-fullnode"></div>
+          </div>
+          <div class="quad-cell" data-quad="isp">
+            <div class="quad-header">
+              <span class="quad-icon">&#127760;</span>
+              <span class="quad-label" data-ko="ISP" data-en="ISP" data-ja="ISP">ISP</span>
+              <span class="quad-stat" id="quad-stat-isp"></span>
+            </div>
+            <div class="quad-mini-list" id="quad-list-isp"></div>
+          </div>
+        </div>
+        <!-- Mobile tab overlay (shown on mobile only) -->
+        <div class="map-tab-overlay mobile-only" id="mobile-tab-overlay">
           <button class="tab-btn active" id="tab-ln"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> <span>{tx('tabLightning')}</span></button>
           <button class="tab-btn" id="tab-mining"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-icon"><path d="M15 4l5 5-11 11H4v-5L15 4z"/><line x1="9" y1="9" x2="15" y2="15"/></svg> <span>{tx('tabMining')}</span></button>
         </div>

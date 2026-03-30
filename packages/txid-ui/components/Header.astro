@@ -18,17 +18,13 @@ const { sub } = Astro.props;
     </a>
     <span class="logo-sep">/</span>
     <span class="logo-sub">{sub}</span>
-    <div class="nav-links desktop-only">
-      <a href="https://txid.uk/#/mining" data-ko="채굴" data-en="Mining" data-ja="マイニング">채굴</a>
-      <a href="https://learn.txid.uk" target="_blank" data-ko="공부방" data-en="The Study" data-ja="学習室">공부방</a>
-    </div>
     <div class="nav-right">
       <div id="txid-auth-mount" class="auth-mount"></div>
       <div class="lang-dropdown desktop-only">
-        <button class="lang-btn" id="lang-btn" title="언어 변경" aria-label="언어 선택" aria-expanded="false">KO</button>
-        <div class="lang-menu" id="lang-menu" role="menu" aria-label="언어 선택">
-          <button>한국어</button>
+        <button class="lang-btn" id="lang-btn" title="Language" aria-label="Language" aria-expanded="false">EN</button>
+        <div class="lang-menu" id="lang-menu" role="menu" aria-label="Language">
           <button>English</button>
+          <button>한국어</button>
           <button>日本語</button>
         </div>
       </div>
@@ -39,17 +35,17 @@ const { sub } = Astro.props;
         </button>
         <div class="hamburger-panel" id="hamburger-panel">
           <div class="settings-section">
-            <div class="settings-label" data-ko="언어" data-en="Language" data-ja="言語">언어</div>
+            <div class="settings-label" data-ko="언어" data-en="Language" data-ja="言語">Language</div>
             <div class="settings-lang-row">
-              <button class="settings-lang-btn" data-lang="ko">KO</button>
               <button class="settings-lang-btn" data-lang="en">EN</button>
+              <button class="settings-lang-btn" data-lang="ko">KO</button>
               <button class="settings-lang-btn" data-lang="ja">JA</button>
             </div>
           </div>
           <div class="settings-section settings-section--border">
             <button class="settings-item" id="hamburger-theme-btn">
               <span id="hamburger-theme-icon"></span>
-              <span id="hamburger-theme-label" data-ko="테마 전환" data-en="Toggle Theme" data-ja="テーマ切替">테마 전환</span>
+              <span id="hamburger-theme-label" data-ko="테마 전환" data-en="Toggle Theme" data-ja="テーマ切替">Toggle Theme</span>
             </button>
           </div>
         </div>
