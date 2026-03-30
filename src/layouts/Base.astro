@@ -28,6 +28,7 @@ const canonicalUrl = `${site}/${lang}/`;
   <meta name="keywords" content="bitcoin node map, lightning nodes by country, mining pool distribution, 비트코인 노드 지도">
   <meta name="theme-color" content="#f7931a">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="/icon-192.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -65,9 +66,6 @@ const canonicalUrl = `${site}/${lang}/`;
   <a href="#main" class="skip-link">{lang === 'en' ? 'Skip to content' : lang === 'ja' ? '本文へスキップ' : '본문으로 건너뛰기'}</a>
   <slot />
 
-  <script data-goatcounter="https://txid.goatcounter.com/count" src="https://gc.zgo.at/count.js" async is:inline></script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-J1ZJM5KK20" is:inline></script>
-  <script src="/gtag-init.js" data-ga-id="G-J1ZJM5KK20" is:inline></script>
   <script src="https://api.txid.uk/txid-auth.js" crossorigin="anonymous" defer is:inline></script>
   <script defer src="https://umami.txid.uk/script.js" data-website-id="ea6d6f3e-715c-4e54-9539-21e574252ce2" is:inline></script>
 </body>
