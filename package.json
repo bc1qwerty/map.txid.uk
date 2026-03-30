@@ -20,5 +20,8 @@
     "astro": "^6.0.5",
     "three": "^0.183.2",
     "topojson-client": "^3.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
   }
 }
